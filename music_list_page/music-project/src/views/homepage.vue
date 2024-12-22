@@ -1,18 +1,19 @@
 <template>
-    <div id="app">
-      <!-- 导航栏 -->
-      <header>
-        <h1>音乐世界</h1>
-      </header>
-  
-      <!-- 歌单滑动展示 -->
-      <main>
-        <h2>推荐歌单</h2>
-        <div class="slider-container">
-          <!-- 左箭头 -->
-          <button class="arrow left" @click="slideLeft">←</button>
-  
-          <!-- 歌单展示区域 -->
+  <div id="app">
+    <!-- 导航栏 -->
+    <header>
+      <h1>音乐世界</h1>
+    </header>
+
+    <!-- 歌单滑动展示 -->
+    <main>
+      <h2>推荐歌单</h2>
+      <div class="slider-container">
+        <!-- 左箭头 -->
+        <button class="arrow left" @click="slideLeft">←</button>
+
+        <!-- 歌单展示区域 -->
+        <div class="playlist-wrapper">
           <div class="playlist-wrapper">
             <div
               class="playlist-card"
@@ -20,92 +21,142 @@
               :key="playlist.id"
               :class="{ visible: isCardVisible(index) }"
               :style="cardStyle(index)"
+              @click="goToPlaylist(playlist.url)"
             >
-              <img :src="playlist.cover" alt="歌单封面" />
-              <h3>{{ playlist.name }}</h3>
-              <p>{{ playlist.description }}</p>
-            </div>
+            <img :src="playlist.cover" alt="歌单封面" />
+            <h3>{{ playlist.name }}</h3>
+            <p>{{ playlist.description }}</p>
           </div>
-  
-          <!-- 右箭头 -->
-          <button class="arrow right" @click="slideRight">→</button>
         </div>
-      </main>
-  
-      <!-- 底部 -->
-      <footer>
-        <p>版权所有 © 2024 音乐世界</p>
-      </footer>
-    </div>
-  </template>
-  
-  <script>
-  export default {
-    name: "HomePage",
-    data() {
-      return {
-        playlists: [
-          { id: 1, name: "流行经典", description: "精选流行音乐合集", cover: require("@/assets/images/playlist_covers/edm.jpg") },
-          { id: 2, name: "轻音乐", description: "舒缓心情的轻音乐", cover: require("@/assets/images/playlist_covers/light.jpg") },
-          { id: 3, name: "电子舞曲", description: "动感十足的电子乐", cover: require("@/assets/images/playlist_covers/pop.jpg") },
-          { id: 4, name: "摇滚经典", description: "不可错过的摇滚金曲", cover: require("@/assets/images/playlist_covers/rock.jpg") },
-          { id: 5, name: "爵士乐", description: "品味高雅的爵士乐", cover: require("@/assets/images/playlist_covers/jazz.jpg") },
-          { id: 6, name: "古典音乐", description: "经典永恒的古典之声", cover: require("@/assets/images/playlist_covers/classical.jpg") },
-        ],
-        visibleStartIndex: 0, // 当前展示的起始索引
-        windowSize: 3, // 每次展示的歌单数量
-      };
-    },
-    methods: {
-      slideLeft() {
-        // 左滑，起始索引减1，支持循环
-        this.visibleStartIndex =
-          (this.visibleStartIndex - 1 + this.playlists.length) %
-          this.playlists.length;
-      },
-      slideRight() {
-        // 右滑，起始索引加1，支持循环
-        this.visibleStartIndex =
-          (this.visibleStartIndex + 1) % this.playlists.length;
-      },
-      cardStyle(index) {
-    const cardWidth = 220; // 卡片宽度（200px） + 间距（20px）
-    const total = this.playlists.length; // 总卡片数
-    const relativeIndex = (index - this.visibleStartIndex + total) % total;
+      </div>
+
+        <!-- 右箭头 -->
+        <button class="arrow right" @click="slideRight">→</button>
+      </div>
+
+      <!-- 新增：三行五列歌单展示 -->
+      <section class="showing-playlists">
+        <h2>歌单展示</h2>
+        <div class="showing-playlists-grid">
+          <div
+            class="small-playlist-card"
+            v-for="playlist in showing_playlists"
+            :key="playlist.id"
+            @click="goToPlaylist(playlist.url)"
+          >
+            <img :src="playlist.cover" alt="歌单封面" />
+            <h3>{{ playlist.name }}</h3>
+            <p>{{ playlist.description }}</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 新增：MV模块 -->
+      <section class="mv-showcase">
+        <h2>热门 MV</h2>
+        <div class="mv-grid">
+          <div
+            class="mv-card"
+            v-for="mv in mvs"
+            :key="mv.id"
+            @click="playMV(mv.url)"
+          >
+            <img :src="mv.cover" alt="MV封面" />
+            <h3>{{ mv.name }}</h3>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- 底部 -->
+    <footer>
+      <p>版权所有 © 2024 音乐世界</p>
+    </footer>
+  </div>
+</template>
+
+<script>
+export default {
+  name: "HomePage",
+  data() {
     return {
-      transform: `translateX(${relativeIndex * cardWidth}px)`,
-      transition: "transform 0.5s ease",
+      playlists: [
+        { id: 1, name: "流行经典", description: "精选流行音乐合集", cover: require("@/assets/images/playlist_covers/edm.jpg"),url: "/playlist?id=1" },
+        { id: 2, name: "轻音乐", description: "舒缓心情的轻音乐", cover: require("@/assets/images/playlist_covers/light.jpg") ,url: "/playlist?id=2"},
+        { id: 3, name: "电子舞曲", description: "动感十足的电子乐", cover: require("@/assets/images/playlist_covers/pop.jpg"),url: "/playlist?id=3" },
+        { id: 4, name: "摇滚经典", description: "不可错过的摇滚金曲", cover: require("@/assets/images/playlist_covers/rock.jpg"),url: "/playlist?id=4" },
+        { id: 5, name: "爵士乐", description: "品味高雅的爵士乐", cover: require("@/assets/images/playlist_covers/jazz.jpg"),url: "/playlist?id=5" },
+        { id: 6, name: "古典音乐", description: "经典永恒的古典之声", cover: require("@/assets/images/playlist_covers/classical.jpg"),url: "/playlist?id=6" },
+      ],
+      visibleStartIndex: 0, // 当前展示的起始索引
+      windowSize: 3, // 每次展示的歌单数量
+      showing_playlists: [
+        { id: 1, name: "歌单 1", description: "歌单描述 1", cover: require("@/assets/images/playlist_covers/edm.jpg"),url: "/playlist?id=1" },
+        { id: 2, name: "歌单 2", description: "歌单描述 2", cover: require("@/assets/images/playlist_covers/light.jpg"),url: "/playlist?id=1" },
+        { id: 3, name: "歌单 3", description: "歌单描述 3", cover: require("@/assets/images/playlist_covers/pop.jpg"),url: "/playlist?id=1" },
+        { id: 4, name: "歌单 4", description: "歌单描述 4", cover: require("@/assets/images/playlist_covers/rock.jpg"),url: "/playlist?id=1" },
+        { id: 5, name: "歌单 5", description: "歌单描述 5", cover: require("@/assets/images/playlist_covers/jazz.jpg"),url: "/playlist?id=1" },
+        { id: 6, name: "歌单 6", description: "歌单描述 6", cover: require("@/assets/images/playlist_covers/classical.jpg"),url: "/playlist?id=1" },
+        { id: 7, name: "歌单 7", description: "歌单描述 7", cover: require("@/assets/images/playlist_covers/edm.jpg"),url: "/playlist?id=1" },
+        { id: 8, name: "歌单 8", description: "歌单描述 8", cover: require("@/assets/images/playlist_covers/light.jpg"),url: "/playlist?id=1" },
+        { id: 9, name: "歌单 9", description: "歌单描述 9", cover: require("@/assets/images/playlist_covers/pop.jpg"),url: "/playlist?id=1" },
+        { id: 10, name: "歌单 10", description: "歌单描述 10", cover: require("@/assets/images/playlist_covers/rock.jpg"),url: "/playlist?id=1" },
+        { id: 11, name: "歌单 11", description: "歌单描述 11", cover: require("@/assets/images/playlist_covers/edm.jpg"),url: "/playlist?id=1" },
+        { id: 12, name: "歌单 12", description: "歌单描述 12", cover: require("@/assets/images/playlist_covers/light.jpg"),url: "/playlist?id=1" },
+        { id: 13, name: "歌单 13", description: "歌单描述 13", cover: require("@/assets/images/playlist_covers/pop.jpg"),url: "/playlist?id=1" },
+        { id: 14, name: "歌单 14", description: "歌单描述 14", cover: require("@/assets/images/playlist_covers/rock.jpg"),url: "/playlist?id=1" },
+        { id: 15, name: "歌单 15", description: "歌单描述 15", cover: require("@/assets/images/playlist_covers/jazz.jpg"),url: "/playlist?id=1" },
+      ],
+      mvs: [
+        { id: 1, name: "MV 1", cover: require("@/assets/images/playlist_covers/pop.jpg"), url: "https://www.bilibili.com/" },
+        { id: 2, name: "MV 2", cover: require("@/assets/images/playlist_covers/pop.jpg"), url: "/play?mv=2" },
+        { id: 3, name: "MV 3", cover: require("@/assets/images/playlist_covers/pop.jpg"), url: "/play?mv=3" },
+        { id: 4, name: "MV 4", cover: require("@/assets/images/playlist_covers/pop.jpg"), url: "/play?mv=4" },
+        { id: 5, name: "MV 5", cover: require("@/assets/images/playlist_covers/pop.jpg"), url: "/play?mv=5" },
+        { id: 6, name: "MV 6", cover: require("@/assets/images/playlist_covers/pop.jpg"), url: "/play?mv=6" },
+        { id: 7, name: "MV 7", cover: require("@/assets/images/playlist_covers/pop.jpg"), url: "/play?mv=7" },
+        { id: 8, name: "MV 8", cover: require("@/assets/images/playlist_covers/pop.jpg"), url: "/play?mv=8" },
+        { id: 9, name: "MV 9", cover: require("@/assets/images/playlist_covers/pop.jpg"), url: "/play?mv=9" },
+        { id: 10, name: "MV 10", cover: require("@/assets/images/playlist_covers/pop.jpg"), url: "/play?mv=10" },
+      ],
     };
   },
-      isCardVisible(index) {
-        // 确定卡片是否在当前窗口内
-        const total = this.playlists.length;
-        const relativeIndex = (index - this.visibleStartIndex + total) % total;
-        return relativeIndex < this.windowSize;
-      },
+  methods: {
+    slideLeft() {
+      this.visibleStartIndex = (this.visibleStartIndex - 1 + this.playlists.length) % this.playlists.length;
     },
-  };
-  </script>
-  
-  <style scoped>
-  /* 样式调整 */
-  body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #f9f9f9;
-  }
-  
-  /* 导航栏 */
-  header {
-    background-color: #333;
-    color: white;
-    padding: 1em;
-    text-align: center;
-  }
-  
-  /* 滑动展示容器 */
-  .slider-container {
+    slideRight() {
+      this.visibleStartIndex = (this.visibleStartIndex + 1) % this.playlists.length;
+    },
+    cardStyle(index) {
+      const cardWidth = 420; // 推荐歌单卡片宽度
+      const total = this.playlists.length; // 总卡片数
+      const relativeIndex = (index - this.visibleStartIndex + total) % total;
+      return {
+        transform: `translateX(${relativeIndex * cardWidth}px)`,
+        transition: "transform 0.5s ease",
+      };
+    },
+    isCardVisible(index) {
+      const total = this.playlists.length;
+      const relativeIndex = (index - this.visibleStartIndex + total) % total;
+      return relativeIndex < this.windowSize;
+    },
+    playMV(url) {
+      window.location.href = url;
+    },
+    goToPlaylist(url) {
+      window.location.href = url;
+    },
+  },
+};
+</script>
+
+<style scoped>
+/* 推荐歌单滑动窗口卡片样式 */
+/* 滑动展示容器 */
+.slider-container {
     display: flex;
     align-items: center;
     justify-content: flex-start;
@@ -113,7 +164,7 @@
     padding: 2em;
     position: relative;
     overflow: hidden;
-    width: 627px;
+    width: 1227px;
     margin: 0 auto;
   }
   
@@ -160,8 +211,8 @@
   .playlist-card {
     position: absolute;
     z-index: 1;
-    width: 200px;
-    height: 250px;
+    width: 400px;
+    height: 450px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -183,7 +234,7 @@
   /* 卡片图片样式 */
   .playlist-card img {
     width: 100%;
-    height: 160px;
+    height: 320px;
     object-fit: cover;
     object-position: center;
     transition: transform 0.6s cubic-bezier(0.25, 0.8, 0.5, 1);
@@ -222,14 +273,76 @@
     opacity: 1; /* 显示文字 */
     transform: translateY(0); /* 回归原位 */
   }
-  
-  
-  
-  footer {
-    text-align: center;
-    padding: 1em;
-    background-color: #333;
-    color: white;
-  }
-  </style>
-  
+
+/* 三行五列小歌单展示卡片样式 */
+.showing-playlists-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1em;
+}
+
+.small-playlist-card {
+  width: 200px;
+  height: 250px;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.small-playlist-card img {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+}
+
+.small-playlist-card:hover {
+  transform: scale(1.1);
+}
+
+/* MV模块样式 */
+.mv-showcase {
+  margin-top: 2em;
+  text-align: center;
+}
+
+.mv-showcase h2 {
+  font-size: 1.8em;
+  color: #333;
+  margin-bottom: 1em;
+}
+
+.mv-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1em;
+}
+
+.mv-card {
+  width: 200px;
+  height: 250px;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  text-align: center;
+}
+
+.mv-card img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.mv-card:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 12px rgba(255, 0, 0, 0.2);
+}
+
+.mv-card h3 {
+  font-size: 1em;
+  margin: 0.5em 0;
+  color: #333;
+}
+</style>
