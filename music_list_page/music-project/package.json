@@ -9,8 +9,13 @@
   },
   "dependencies": {
     "axios": "^1.7.9",
+    "comment-core-library": "^0.11.1",
     "core-js": "^3.8.3",
+    "element-plus": "^2.9.1",
+    "gsap": "^3.12.5",
+    "ip": "^2.0.1",
     "music-project": "file:",
+    "plyr": "^3.7.8",
     "vue": "^3.2.13",
     "vue-router": "^4.5.0"
   },

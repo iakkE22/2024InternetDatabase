@@ -16,6 +16,30 @@ const router = createRouter({
       name: 'home',
       component: () => import('../views/homepage.vue'),
       meta: {
+        showNavBar: false
+      }
+    },
+    {
+        path: '/aboutus',
+        name: 'aboutus',
+        component: () => import('../views/AboutUsView.vue'),
+        meta: {
+          showNavBar: false
+        }
+      },
+    {
+        path: '/user',
+        name: 'userpage',
+        component: () => import('../views/UserPageView.vue'),
+        meta: {
+          showNavBar: false
+        }
+      },
+    {
+      path: '/list',
+      name: 'songlist',
+      component: () => import('../views/songListView.vue'),
+      meta: {
         showNavBar: true
       }
     },
