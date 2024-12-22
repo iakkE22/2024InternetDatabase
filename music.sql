@@ -1,17 +1,17 @@
 /*
  Navicat Premium Data Transfer
 
- Source Server         : 111
+ Source Server         : AAA建材王师傅
  Source Server Type    : MySQL
- Source Server Version : 80019
+ Source Server Version : 80036
  Source Host           : localhost:3306
  Source Schema         : music
 
  Target Server Type    : MySQL
- Target Server Version : 80019
+ Target Server Version : 80036
  File Encoding         : 65001
 
- Date: 22/12/2024 22:14:21
+ Date: 23/12/2024 01:00:12
 */
 
 SET NAMES utf8mb4;
@@ -29,6 +29,11 @@ CREATE TABLE `admins`  (
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
+-- Records of admins
+-- ----------------------------
+INSERT INTO `admins` VALUES (1, '高级');
+
+-- ----------------------------
 -- Table structure for artists
 -- ----------------------------
 DROP TABLE IF EXISTS `artists`;
@@ -39,6 +44,11 @@ CREATE TABLE `artists`  (
   `ProfilePic` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
   PRIMARY KEY (`ArtistID`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of artists
+-- ----------------------------
+INSERT INTO `artists` VALUES (1, '祁厅长', '祁同伟，别称“祁厅长”。 电视剧《人民的名义》中的反派角色，由许亚军饰演。 剧中设定为汉东省公安厅长，毕业于汉东大学政法系，同时也是高育良学生、侯亮平和陈海学长。 其形象部分参考了天津市公安局原党委书记武长顺的案例。', '/uploads/profiles/artist1.jpg');
 
 -- ----------------------------
 -- Table structure for developers
@@ -68,6 +78,11 @@ CREATE TABLE `musicvideos`  (
   INDEX `ArtistID`(`ArtistID`) USING BTREE,
   CONSTRAINT `musicvideos_ibfk_1` FOREIGN KEY (`ArtistID`) REFERENCES `artists` (`ArtistID`) ON DELETE RESTRICT ON UPDATE RESTRICT
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of musicvideos
+-- ----------------------------
+INSERT INTO `musicvideos` VALUES (1, '鸳鸯戏MV', 1, '/uploads/mv/鸳鸯戏.mp4');
 
 -- ----------------------------
 -- Table structure for mvcomments
@@ -153,6 +168,11 @@ CREATE TABLE `songcomments`  (
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
+-- Records of songcomments
+-- ----------------------------
+INSERT INTO `songcomments` VALUES (1, 1, 1, '祁厅长，我太想进步了', '2024-12-23 00:37:26');
+
+-- ----------------------------
 -- Table structure for songlikes
 -- ----------------------------
 DROP TABLE IF EXISTS `songlikes`;
@@ -177,6 +197,11 @@ CREATE TABLE `songs`  (
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
+-- Records of songs
+-- ----------------------------
+INSERT INTO `songs` VALUES (1, '鸳鸯戏', 1, '/uploads/musics/鸳鸯戏.mp3');
+
+-- ----------------------------
 -- Table structure for users
 -- ----------------------------
 DROP TABLE IF EXISTS `users`;
@@ -186,5 +211,10 @@ CREATE TABLE `users`  (
   `Password` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   PRIMARY KEY (`UserID`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of users
+-- ----------------------------
+INSERT INTO `users` VALUES (1, 'admin', 'admin');
 
 SET FOREIGN_KEY_CHECKS = 1;
