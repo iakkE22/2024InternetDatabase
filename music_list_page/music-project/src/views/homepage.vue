@@ -20,7 +20,7 @@
               :key="playlist.PlaylistID"
               :class="{ visible: isCardVisible(index) }"
               :style="cardStyle(index)"
-              @click="goToPlaylist(playlist.url)"
+              @click="goToPlaylist(playlist.url|| `/playlist?id=${playlist.PlaylistID}`)"
             >
               <img
                 :src="playlist.CoverImage || '/music-project/assets/images/loading.gif'"
@@ -43,7 +43,7 @@
               class="small-playlist-card"
               v-for="playlist in showing_playlists"
               :key="playlist.PlaylistID"
-              @click="goToPlaylist(playlist.url)"
+              @click="goToPlaylist(playlist.url|| `/playlist?id=${playlist.PlaylistID}`)"
             >
               <img
                 :src="playlist.CoverImage || '/music-project/assets/images/loading.gif'"
@@ -70,6 +70,7 @@
                 alt="MV封面"
               />
               <h3>{{ mv.Title }}</h3>
+              <p>{{ playlist.Description }}</p>
             </div>
           </div>
         </section>

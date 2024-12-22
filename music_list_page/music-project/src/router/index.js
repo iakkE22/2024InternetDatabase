@@ -36,7 +36,7 @@ const router = createRouter({
         }
       },
     {
-      path: '/list',
+      path: '/playlist',
       name: 'songlist',
       component: () => import('../views/songListView.vue'),
       meta: {

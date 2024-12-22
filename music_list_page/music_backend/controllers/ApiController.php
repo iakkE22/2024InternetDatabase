@@ -213,6 +213,71 @@ class ApiController extends Controller
             ];
         }
     }
+
+    public function actionGetSongs($id)
+{
+    \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+    try {
+        // 查询歌单信息
+        $playlist = (new \yii\db\Query())
+            ->select(['PlaylistID', 'Title', 'Description', 'CoverImage'])
+            ->from('playlists')
+            ->where(['PlaylistID' => $id])
+            ->one();
+
+        if (!$playlist) {
+            return [
+                'status' => 0,
+                'message' => '歌单不存在',
+            ];
+        }
+
+        // 查询歌单的歌曲信息
+        $songs = (new \yii\db\Query())
+            ->select([
+                'songs.SongID',
+                'songs.Title',
+                'songs.ArtistID', // 歌手 ID
+                'songs.FilePath',
+                'songs.CoverImage',
+            ])
+            ->from('playlist_songs')
+            ->innerJoin('songs', 'playlist_songs.SongID = songs.SongID')
+            ->where(['playlist_songs.PlaylistID' => $id])
+            ->orderBy(['playlist_songs.OrderIndex' => SORT_ASC])
+            ->all();
+
+        // 查询歌单的评论信息
+        $comments = (new \yii\db\Query())
+            ->select([
+                'playlistcomments.CommentID',
+                'playlistcomments.UserID',
+                'playlistcomments.CommentText',
+                'playlistcomments.CommentDate',
+            ])
+            ->from('playlistcomments')
+            ->where(['playlistcomments.PlaylistID' => $id])
+            ->orderBy(['playlistcomments.CommentDate' => SORT_DESC]) // 按评论时间倒序排列
+            ->all();
+
+        return [
+            'status' => 1,
+            'data' => [
+                'playlist' => $playlist,
+                'songs' => $songs,
+                'comments' => $comments,
+            ],
+        ];
+    } catch (\Exception $e) {
+        return [
+            'status' => 0,
+            'message' => $e->getMessage(),
+        ];
+    }
+}
+
+
     public function actionGetMvs()
     {
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;

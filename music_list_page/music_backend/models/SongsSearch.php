@@ -18,7 +18,7 @@ class SongsSearch extends Songs
     {
         return [
             [['SongID', 'ArtistID'], 'integer'],
-            [['Title', 'FilePath'], 'safe'],
+            [['Title', 'FilePath', 'CoverImage'], 'safe'],
         ];
     }
 
@@ -63,7 +63,8 @@ class SongsSearch extends Songs
         ]);
 
         $query->andFilterWhere(['like', 'Title', $this->Title])
-            ->andFilterWhere(['like', 'FilePath', $this->FilePath]);
+            ->andFilterWhere(['like', 'FilePath', $this->FilePath])
+            ->andFilterWhere(['like', 'CoverImage', $this->CoverImage]);
 
         return $dataProvider;
     }
