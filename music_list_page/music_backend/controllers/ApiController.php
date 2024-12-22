@@ -183,6 +183,61 @@ class ApiController extends Controller
             'message' => '用户未登录',
         ];
     }
+
+    public function actionGetPlaylists()
+    {
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+        try {
+            $playlists = (new \yii\db\Query())
+                ->select(['PlaylistID', 'Title', 'Description', 'CoverImage'])
+                ->from('playlists')
+                ->all();
+
+            foreach ($playlists as &$playlist) {
+                if (empty($playlist['CoverImage'])) {
+                    $playlist['CoverImage'] = '/music-project/assets/images/loading.gif'; // 默认图片
+                }
+            }
+
+            return [
+                'status' => 1,
+                'data' => [
+                    'playlists' => $playlists,
+                ],
+            ];
+        } catch (\Exception $e) {
+            return [
+                'status' => 0,
+                'message' => $e->getMessage(),
+            ];
+        }
+    }
+    public function actionGetMvs()
+    {
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+        try {
+            $mvs = (new \yii\db\Query())
+                ->select(['MVID', 'Title', 'CoverImage'])
+                ->from('mvs')
+                ->all();
+
+            return [
+                'status' => 1,
+                'data' => [
+                    'mvs' => $mvs,
+                ],
+            ];
+        } catch (\Exception $e) {
+            return [
+                'status' => 0,
+                'message' => $e->getMessage(),
+            ];
+        }
+    }
+
+
     public function behaviors()
     {
         return [

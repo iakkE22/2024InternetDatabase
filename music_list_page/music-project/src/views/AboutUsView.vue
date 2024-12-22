@@ -79,21 +79,21 @@
             name: "木棉",
             role: "创始人 & CEO",
             bio: "木棉是音乐世界的创始人，热爱音乐和技术，致力于打造全球顶尖的音乐平台。",
-            photo: require("@/assets/images/team/ceo.jpg"),
+            photo: "/music-project/assets/images/team/ceo.jpg",
             github: "https://pornhub.com"
           },
           {
             name: "红危机",
             role: "首席技术官",
             bio: "红危机专注于音乐推荐算法和用户体验优化，是技术团队的核心力量。",
-            photo: require("@/assets/images/team/cto.jpg"),
+            photo: "/music-project/assets/images/team/cto.jpg",
             github: "https://pornhub.com"
           },
           {
             name: "deps",
             role: "设计总监",
             bio: "deps在用户界面设计和交互设计方面拥有多年经验，让音乐世界充满视觉美感。",
-            photo: require("@/assets/images/team/designer.jpg"),
+            photo: "/music-project/assets/images/team/designer.jpg",
             github: "https://pornhub.com"
           }
         ],

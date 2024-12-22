@@ -37,28 +37,28 @@ export default {
   data() {
     return {
       playlist: {
-        cover: require("@/assets/images/playlist_covers/rock.jpg"), // 歌单封面图片
+        cover: "/music-project/assets/images/playlist_covers/rock.jpg", // 歌单封面图片
         name: "精选歌单", // 歌单名称
         description: "这是一份精选歌单，包含多首好听的音乐！", // 歌单描述
         songs: [
           {
             name: "歌曲1",
             artist: "歌手1",
-            cover: require("@/assets/images/song_covers/song-cover.jpg"),
-            url: require("@/assets/audio/songs/song1.mp3")
+            cover: "/music-project/assets/images/song_covers/song-cover.jpg",
+            url: "/music-project/assets/audio/songs/song1.mp3"
           },
           {
             name: "歌曲2",
             artist: "歌手2",
-            cover: require("@/assets/images/song_covers/song-cover.jpg"),
-            url: require("@/assets/audio/songs/song2.mp3")
+            cover: "/music-project/assets/images/song_covers/song-cover.jpg",
+            url: "/music-project/assets/audio/songs/song2.mp3"
           }
         ]
       },
       currentSong: {
         name: "未播放歌曲", // 默认歌曲信息
         artist: "未知歌手",
-        cover: require("@/assets/images/song_covers/default-cover.jpg"),
+        cover: "/music-project/assets/images/song_covers/default-cover.jpg",
         url: ""
       } // 当前播放的歌曲
     };
