@@ -55,6 +55,17 @@ $this->title = '后台管理';
                 </div>
             </div>
 
+            <!-- 歌单包含歌曲管理卡片 -->
+            <div class="col-md-4 mb-4">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Playlists-Songs</h5>
+                        <p class="card-text text-muted">管理歌单中的歌曲信息</p>
+                        <?= Html::a('管理 Playlists-Songs', ['playlist-songs/index'], ['class' => 'btn btn-primary btn-block']) ?>
+                    </div>
+                </div>
+            </div>
+
             <!-- 视频管理卡片 -->
             <div class="col-md-4 mb-4">
                 <div class="card shadow-sm h-100">
