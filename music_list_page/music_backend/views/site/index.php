@@ -6,7 +6,7 @@ $this->title = '后台管理';
 
 <div class="site-admin">
     <div class="container text-center">
-        <h1 class="display-4">欢迎管理员！</h1>
+        <h1 class="display-4">欢迎音乐管理员！</h1>
         <p class="lead">请选择需要管理的数据库表：</p>
 
         <!-- 卡片布局 -->

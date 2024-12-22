@@ -105,31 +105,59 @@ export default {
       this.isLogin = false;
     },
     async handleLogin() {
-  const { username, password } = this.loginData;
-  console.log("Login Data:", { username, password });
+      // const { username, password } = this.loginData;
+      // console.log("Login Data:", { username, password });
 
-  try {
-    // 构建 GET 请求 URL，带上 username 和 password 参数
-    const response = await axios.get(
-      "http://localhost:8080/index.php?r=api/login",
-      {
-        params: { username, password }, // GET 请求参数
-        withCredentials: true, // 如果需要发送 Cookie
+      // try {
+      //   // 构建 GET 请求 URL，带上 username 和 password 参数
+      //   const response = await axios.get(
+      //     "http://localhost:8080/index.php?r=api/login",
+      //     {
+      //       params: { username, password }, // GET 请求参数
+      //       withCredentials: true, // 如果需要发送 Cookie
+      //     }
+      //   );
+
+      //   // 请求成功后的逻辑
+      //   if (response.data.status === 1) {
+      //     //alert("Login Successful!");
+      //     window.location.href = "/"; // 登录成功后跳转
+      //   } else {
+      //     alert(response.data.message || "Invalid username or password!");
+      //   }
+      // } catch (error) {
+      //   console.error("Login Failed:", error.response ? error.response.data : error.message);
+      //   alert("An error occurred during login. Please try again.");
+      // }
+      const { username, password } = this.loginData;
+      console.log("Login Data:", { username, password });
+
+      try {
+        // 构建 GET 请求 URL，带上 username 和 password 参数
+        const response = await axios.get(
+          "http://localhost:8080/index.php?r=api/login",
+          {
+            params: { username, password }, // GET 请求参数
+            withCredentials: true, // 如果需要发送 Cookie
+          }
+        );
+
+        // 请求成功后的逻辑
+        if (response.data.status === 1) {
+          // 存储用户信息到 sessionStorage
+          const userData = response.data.data; // 从响应中获取用户数据
+          sessionStorage.setItem("userInfo", JSON.stringify(userData));
+
+          alert("Login Successful!");
+          window.location.href = "/"; // 登录成功后跳转
+        } else {
+          alert(response.data.message || "Invalid username or password!");
+        }
+      } catch (error) {
+        console.error("Login Failed:", error.response ? error.response.data : error.message);
+        alert("An error occurred during login. Please try again.");
       }
-    );
-
-    // 请求成功后的逻辑
-    if (response.data.status === 1) {
-      //alert("Login Successful!");
-      window.location.href = "/"; // 登录成功后跳转
-    } else {
-      alert(response.data.message || "Invalid username or password!");
-    }
-  } catch (error) {
-    console.error("Login Failed:", error.response ? error.response.data : error.message);
-    alert("An error occurred during login. Please try again.");
-  }
-},
+    },
     async handleRegister() {
       const { username, password, confirmPassword } = this.registerData;
 
