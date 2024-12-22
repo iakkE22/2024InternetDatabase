@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vue 歌单界面</title>
+  <script src="https://cdn.jsdelivr.net/npm/vue@3.3.4/dist/vue.global.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #f4f4f4;
+    }
+    #app {
+      width: 600px; /* 宽度增加 */
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+      background-color: #fff;
+    }
+    .cover {
+      position: relative;
+    }
+    .cover img {
+      width: 100%;
+      height: auto;
+    }
+    .cover h2 {
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      margin: 0;
+      font-size: 24px;
+      color: white;
+      background-color: rgba(0, 0, 0, 0.6);
+      padding: 10px 15px;
+      border-radius: 6px;
+    }
+    .song-list {
+      padding: 20px;
+    }
+    .song {
+      padding: 15px;
+      margin-bottom: 10px;
+      border-bottom: 1px solid #ddd;
+      font-size: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .song:last-child {
+      border-bottom: none;
+    }
+    .song button {
+      padding: 5px 10px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .song button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <song-list :playlist="playlist"></song-list>
+  </div>
+
+  <script>
+    // 子组件：SongList
+    const SongList = {
+      props: ['playlist'],
+      data() {
+        return {
+          currentAudio: null // 当前播放的 audio 对象
+        };
+      },
+      methods: {
+        playSong(songUrl) {
+          // 如果有正在播放的音频，停止它
+          if (this.currentAudio) {
+            this.currentAudio.pause();
+            this.currentAudio.currentTime = 0;
+          }
+          // 创建新的 audio 对象并播放
+          this.currentAudio = new Audio(songUrl);
+          this.currentAudio.play();
+        }
+      },
+      template: `
+        <div>
+          <!-- 歌单封面 -->
+          <div class="cover">
+            <img :src="playlist.cover" alt="歌单封面">
+            <h2>{{ playlist.name }}</h2>
+          </div>
+          <!-- 歌曲列表 -->
+          <div class="song-list">
+            <div class="song" v-for="(song, index) in playlist.songs" :key="index">
+              <div>
+                <p><strong>{{ song.name }}</strong></p>
+                <p>歌手：{{ song.artist }}</p>
+              </div>
+              <button @click="playSong(song.url)">播放</button>
+            </div>
+          </div>
+        </div>
+      `
+    };
+
+    // Vue 应用
+    const app = Vue.createApp({
+      components: {
+        SongList
+      },
+      data() {
+        return {
+          playlist: {
+            name: "小明的歌单",
+            cover: "https://via.placeholder.com/600x300", // 替换为实际封面链接
+            songs: [
+            { name: "whiplash", artist: "aespa" },
+            { name: "supernova", artist: "aespa" },
+            { name: "savage", artist: "aespa" },
+            { name: "ammagedon", artist: "aespa" },
+            { name: "black mamba", artist: "aespa" }
+            ]
+          }
+        };
+      }
+    });
+
+    app.mount("#app");
+  </script>
+</body>
+</html>
