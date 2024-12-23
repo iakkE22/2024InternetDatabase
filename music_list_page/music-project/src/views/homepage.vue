@@ -63,7 +63,7 @@
               class="mv-card"
               v-for="mv in mvs"
               :key="mv.MVID"
-              @click="playMV(mv.url)"
+              @click="playMV(mv.url|| `/mv?id=${mv.MVID}`)"
             >
               <img
                 :src="mv.CoverImage || '/music-project/assets/images/loading.gif'"

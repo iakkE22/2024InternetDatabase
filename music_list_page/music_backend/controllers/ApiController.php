@@ -259,26 +259,45 @@ class ApiController extends Controller
     }
 
     public function actionGetVideoDetail($id)
-    {
-        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+{
+    \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
 
-        try {
-            $video = (new \yii\db\Query())
-                ->select(['musicvideos.MVID', 'musicvideos.Title', 'musicvideos.ArtistID', 'musicvideos.VideoPath', 'IFNULL(mvlikes.LikeCount, 0) AS LikeCount'])
-                ->from('musicvideos')
-                ->leftJoin('mvlikes', 'musicvideos.MVID = mvlikes.MVID')
-                ->where(['musicvideos.MVID' => $id])
-                ->one();
+    try {
+        // 查询视频详情，包括艺术家名称
+        $video = (new \yii\db\Query())
+            ->select([
+                'musicvideos.MVID',
+                'musicvideos.Title',
+                'musicvideos.ArtistID',
+                'artists.Name AS ArtistName', // 获取艺术家名称
+                'musicvideos.VideoPath',
+                'IFNULL(mvlikes.LikeCount, 0) AS LikeCount',
+            ])
+            ->from('musicvideos')
+            ->leftJoin('artists', 'musicvideos.ArtistID = artists.ArtistID') // 连接 artists 表
+            ->leftJoin('mvlikes', 'musicvideos.MVID = mvlikes.MVID')
+            ->where(['musicvideos.MVID' => $id])
+            ->one();
 
-            if ($video) {
-                return ['status' => 1, 'data' => ['video' => $video]];
-            } else {
-                return ['status' => 0, 'message' => '视频不存在'];
-            }
-        } catch (\Exception $e) {
-            return ['status' => 0, 'message' => $e->getMessage()];
+        if ($video) {
+            return [
+                'status' => 1,
+                'data' => ['video' => $video],
+            ];
+        } else {
+            return [
+                'status' => 0,
+                'message' => '视频不存在',
+            ];
         }
+    } catch (\Exception $e) {
+        return [
+            'status' => 0,
+            'message' => $e->getMessage(),
+        ];
     }
+}
+
 
     public function actionGetMvs()
     {
@@ -385,22 +404,36 @@ class ApiController extends Controller
     }
     
     public function actionGetComments($videoId)
-    {
-        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+{
+    \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
 
-        try {
-            $comments = (new \yii\db\Query())
-                ->select(['UserID', 'CommentText', 'CommentDate'])
-                ->from('mvcomments')
-                ->where(['MVID' => $videoId])
-                ->orderBy(['CommentDate' => SORT_DESC])
-                ->all();
+    try {
+        // 查询与视频关联的评论
+        $comments = (new \yii\db\Query())
+            ->select([
+                'mvcomments.UserID',
+                'mvcomments.CommentText',
+                'mvcomments.CommentDate',
+                'users.Username AS UserName', // 获取用户名
+            ])
+            ->from('mvcomments')
+            ->leftJoin('users', 'mvcomments.UserID = users.UserID') // 连接用户表
+            ->where(['mvcomments.MVID' => $videoId])
+            ->orderBy(['mvcomments.CommentDate' => SORT_DESC])
+            ->all();
 
-            return ['status' => 1, 'data' => ['comments' => $comments]];
-        } catch (\Exception $e) {
-            return ['status' => 0, 'message' => $e->getMessage()];
-        }
+        return [
+            'status' => 1,
+            'data' => ['comments' => $comments],
+        ];
+    } catch (\Exception $e) {
+        return [
+            'status' => 0,
+            'message' => $e->getMessage(),
+        ];
     }
+}
+
 
     public function actionAddComment()
     {

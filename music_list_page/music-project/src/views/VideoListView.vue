@@ -55,11 +55,11 @@ export default {
     },
     // 跳转到视频详情页
     goToVideoDetail(MVID) {
-      this.$router.push({
-        name: "videoDetail",
-        params: { id: MVID },
-      });
-    },
+  this.$router.push({
+    name: "videoDetail",
+    query: { id: MVID }, // 使用 query 参数传递 id
+  });
+},
     // 处理点赞
     async handleLike(MVID) {
       try {

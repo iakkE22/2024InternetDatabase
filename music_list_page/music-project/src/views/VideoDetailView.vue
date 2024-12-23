@@ -48,7 +48,7 @@ export default {
     };
   },
   async created() {
-    const videoId = this.$route.params.id;
+    const videoId = this.$route.query.id;
     if (!videoId) {
       alert("视频 ID 丢失！");
       this.$router.push("/");
