@@ -16,7 +16,7 @@ const router = createRouter({
       name: 'home',
       component: () => import('../views/homepage.vue'),
       meta: {
-        showNavBar: false
+        showNavBar: true
       }
     },
     {
@@ -24,7 +24,7 @@ const router = createRouter({
         name: 'aboutus',
         component: () => import('../views/AboutUsView.vue'),
         meta: {
-          showNavBar: false
+          showNavBar: true
         }
       },
     {
@@ -32,7 +32,7 @@ const router = createRouter({
         name: 'userpage',
         component: () => import('../views/UserPageView.vue'),
         meta: {
-          showNavBar: false
+          showNavBar: true
         }
       },
     {
@@ -47,6 +47,9 @@ const router = createRouter({
       path: "/video",
       name: "videoList",
       component: () => import("../views/VideoListView.vue"),
+      meta: {
+        showNavBar: true
+      }
     },
     {
       path: "/video/:id",
