@@ -11,7 +11,7 @@
  Target Server Version : 80036
  File Encoding         : 65001
 
- Date: 23/12/2024 14:30:00
+ Date: 23/12/2024 15:36:23
 */
 
 SET NAMES utf8mb4;
@@ -158,6 +158,8 @@ CREATE TABLE `playlistcomments`  (
 INSERT INTO `playlistcomments` VALUES (1, 1, 1, '你好你好', '2024-12-23 12:01:19');
 INSERT INTO `playlistcomments` VALUES (2, 2, 1, '你好', '2024-12-23 07:28:59');
 INSERT INTO `playlistcomments` VALUES (3, 1, 1, '请进行评论', '2024-12-23 07:29:21');
+INSERT INTO `playlistcomments` VALUES (4, 5, 1, '真的吗', '2024-12-23 07:50:49');
+INSERT INTO `playlistcomments` VALUES (5, 1, 1, '你好', '2024-12-23 08:35:13');
 
 -- ----------------------------
 -- Table structure for playlistlikes
