@@ -120,7 +120,7 @@
     padding: 40px 20px;
     color: #333;
     text-align: center;
-    background: linear-gradient(to bottom, #56ccf2, #2f80ed);
+    background: linear-gradient(to bottom, #f99c07, #ffd19c);
   }
   
   /* 页头样式 */
@@ -136,7 +136,7 @@
   
   .about-header p {
     font-size: 1.2em;
-    color: #e0e0e0;
+    color: #ffe7cc;
     margin-top: 10px;
   }
   
@@ -193,7 +193,7 @@
   .image-card h3 {
     font-size: 1.2em;
     margin: 10px 0 5px;
-    color: #333;
+    color: #f99c07;
   }
   
   .image-card p {
@@ -216,49 +216,85 @@
   }
   
   .modal {
-    background: #fff;
-    border-radius: 15px;
-    padding: 20px;
-    max-width: 500px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    text-align: center;
-    position: relative;
-  }
-  
-  .modal img {
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    object-fit: cover;
-    margin-bottom: 20px;
-  }
-  
-  .modal h3 {
-    font-size: 1.5em;
-    color: #333;
-    margin: 10px 0;
-  }
-  
-  .modal p {
-    font-size: 1.1em;
-    color: #666;
-    margin: 5px 0;
-  }
-  
-  .close-button {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background: transparent;
-    border: none;
-    font-size: 1.5em;
-    color: #333;
-    cursor: pointer;
-  }
-  
-  .close-button:hover {
-    color: #ff0000;
-  }
+  background: #fff;
+  border-radius: 15px;
+  padding: 30px;
+  width: 600px;
+  height: 600px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  text-align: left; /* 左对齐文本内容 */
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.modal img {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 20px;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  gap: 20px; /* 图片和文字之间的间距 */
+}
+
+.modal-content {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.modal-content h3 {
+  font-size: 1.5em;
+  color: #333;
+  margin: 0;
+}
+
+.modal-content p {
+  font-size: 1.1em;
+  color: #666;
+  margin: 0;
+  line-height: 1.6; /* 增加行高 */
+}
+
+.modal-content .github-link {
+  margin-top: 15px;
+  font-size: 1.1em;
+  color: #f99c07;
+  text-decoration: none;
+  padding: 10px 20px;
+  border: 1px solid #f99c07;
+  border-radius: 5px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  display: inline-block; /* 使按钮居左显示 */
+}
+
+.modal-content .github-link:hover {
+  background-color: #f99c07;
+  color: #fff;
+}
+
+.close-button {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: transparent;
+  border: none;
+  font-size: 1.5em;
+  color: #333;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.close-button:hover {
+  color: #ff0000;
+}
+
   
   /* 页脚样式 */
   .about-footer {
@@ -281,7 +317,7 @@
 
 .contact-section h2 {
   font-size: 1.8em; /* 标题字体大小 */
-  color: #333; /* 标题颜色 */
+  color: #f99c07; /* 标题颜色 */
   margin-bottom: 15px; /* 标题下方的间距 */
 }
 
@@ -316,16 +352,16 @@
   display: inline-block;
   margin-top: 15px;
   font-size: 1.1em;
-  color: #2f80ed;
+  color: #f99c07;
   text-decoration: none;
   padding: 10px 20px;
-  border: 1px solid #2f80ed;
+  border: 1px solid #f99c07;
   border-radius: 5px;
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .github-link:hover {
-  background-color: #2f80ed;
+  background-color:  #f99c07;
   color: #fff;
 }
   </style>

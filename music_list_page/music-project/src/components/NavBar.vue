@@ -133,31 +133,38 @@ export default {
   },
 };
 </script>
-
 <style scoped>
-/* 样式同之前 */
+/* 导航栏样式 */
 .el-menu {
   line-height: 60px;
-  background-color: #2f80ed;
+  background-color: #f99c07; /* 橙色主题背景 */
   color: white;
   display: flex;
   align-items: center;
 }
 
+/* 搜索按钮样式 */
 .search-toggle {
   cursor: pointer;
-  width: 24px;
-  height: 24px;
+  width: 30px;
+  height: 30px;
   margin-left: auto;
+  filter: brightness(0) invert(1); /* 确保图标在白色背景下可见 */
+  transition: transform 0.3s ease;
 }
 
+.search-toggle:hover {
+  transform: scale(1.2);
+}
+
+/* 弹出搜索框的背景样式 */
 .overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.8); /* 黑色半透明背景 */
+  background: rgba(249, 156, 7, 0.9); /* 橙色半透明背景 */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -166,16 +173,30 @@ export default {
   z-index: 9999;
 }
 
+/* 搜索框标题 */
 .overlay-header {
   display: flex;
   gap: 10px;
   margin-bottom: 20px;
 }
 
+/* 搜索输入框 */
 .overlay-search-input {
   width: 300px;
+  border: 2px solid white;
+  border-radius: 5px;
+  padding: 10px;
+  font-size: 16px;
+  background: rgba(255, 255, 255, 0.8);
+  color: #333;
 }
 
+.overlay-search-input:focus {
+  outline: none;
+  border-color: #f99c07; /* 橙色主题边框 */
+}
+
+/* 搜索结果列表样式 */
 .overlay-results {
   width: 80%;
   max-height: 60%;
@@ -184,5 +205,40 @@ export default {
   color: black;
   border-radius: 10px;
   padding: 20px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* 按钮全局样式 */
+button {
+  background-color: #f99c07; /* 橙色主题按钮 */
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #e68a00; /* 按钮悬停效果 */
+}
+
+button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+/* 为弹出搜索框添加轻微动画 */
+.overlay {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 </style>

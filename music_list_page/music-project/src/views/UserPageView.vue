@@ -132,17 +132,17 @@ export default {
   },
 };
 </script>
-
-<style scoped>
+<style scoped> 
 /* 页面容器 */
 .user-profile-container {
   font-family: Arial, sans-serif;
   padding: 20px;
   color: #333;
-  background: linear-gradient(to bottom, #56ccf2, #2f80ed);
+  background: linear-gradient(to bottom, #f99c07, #ffcc80); /* 橙色渐变背景 */
   min-height: 100vh;
   text-align: center;
-  width: 600px;
+  width: 1500px; /* 调宽页面整体宽度 */
+  margin: 0 auto; /* 居中显示 */
 }
 
 /* 页头样式 */
@@ -151,46 +151,53 @@ export default {
 }
 
 .profile-header h1 {
-  font-size: 2.5em;
-  color: #fff;
+  font-size: 2.8em; /* 字体稍微调大 */
+  color: #fff; /* 白色标题 */
 }
 
 .profile-header p {
-  font-size: 1.2em;
-  color: #e0e0e0;
+  font-size: 1.4em; /* 副标题字体加大 */
+  color: #ffe5b4; /* 浅橙色副标题 */
 }
 
 /* 用户信息卡片 */
 .profile-card {
   background: #fff;
   border-radius: 15px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  padding: 20px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* 添加阴影效果 */
+  padding: 30px; /* 内边距增大 */
   margin: 20px auto;
-  max-width: 600px;
+  max-width: 800px; /* 卡片宽度增大 */
   text-align: center;
 }
 
 .profile-card h2 {
-  font-size: 1.8em;
-  color: #333;
+  font-size: 2em; /* 字体调大 */
+  color: #f99c07; /* 突出橙色标题 */
   margin: 10px 0;
+}
+
+.profile-card p {
+  color: #555;
+  margin-top: 10px;
+  font-size: 1.2em; /* 调整文字大小 */
 }
 
 /* 评论部分 */
 .user-comments {
-  margin-top: 20px;
+  margin-top: 30px; /* 增加顶部间距 */
   text-align: left;
 }
 
 .user-comments h2 {
-  font-size: 1.8em;
-  margin-bottom: 10px;
+  font-size: 2em; /* 标题字体加大 */
+  margin-bottom: 20px; /* 增加间距 */
+  color: #f99c07; /* 橙色标题 */
 }
 
 .user-comments h3 {
-  margin-top: 20px;
-  font-size: 1.5em;
+  margin-top: 25px;
+  font-size: 1.6em;
   color: #555;
 }
 
@@ -200,20 +207,28 @@ export default {
 }
 
 .user-comments li {
-  margin-bottom: 15px;
-  padding: 10px;
-  background: #f9f9f9;
-  border-radius: 5px;
+  margin-bottom: 20px; /* 增加间距 */
+  padding: 15px; /* 内边距增大 */
+  background: #fff8e1; /* 浅橙色背景 */
+  border-left: 6px solid #f99c07; /* 橙色装饰条加宽 */
+  border-radius: 8px; /* 增加圆角 */
+  transition: transform 0.3s ease;
+}
+
+.user-comments li:hover {
+  transform: translateX(8px); /* 悬停时更明显的移动 */
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
 }
 
 .user-comments li strong {
   display: block;
   margin-bottom: 5px;
   color: #333;
+  font-size: 1.1em; /* 加大用户名字体 */
 }
 
 .loading p {
-  font-size: 1.2em;
+  font-size: 1.4em;
   color: #fff;
 }
 </style>
