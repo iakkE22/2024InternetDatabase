@@ -309,7 +309,38 @@ class ApiController extends Controller
             ];
         }
     }
+    public function actionSearchMvs()
+{
+    \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
 
+    try {
+        $query = \Yii::$app->request->get('query'); // 获取查询参数
+
+        if (empty($query)) {
+            throw new \Exception("查询关键词不能为空");
+        }
+
+        // 在数据库中搜索相关 MV
+        $mvs = (new \yii\db\Query())
+            ->select(['MVID', 'Title', 'CoverImage', 'IFNULL(LikeCount, 0) AS LikeCount'])
+            ->from('musicvideos')
+            ->leftJoin('mvlikes', 'musicvideos.MVID = mvlikes.MVID')
+            ->where(['like', 'Title', $query]) // 使用 `like` 关键字模糊匹配
+            ->all();
+
+        return [
+            'status' => 1,
+            'data' => [
+                'mvs' => $mvs,
+            ],
+        ];
+    } catch (\Exception $e) {
+        return [
+            'status' => 0,
+            'message' => $e->getMessage(),
+        ];
+    }
+}
     public function actionLikeMv()
     {
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
@@ -502,11 +533,11 @@ class ApiController extends Controller
                     'Origin' => ['http://localhost:8081'], // 前端地址
                     'Access-Control-Request-Method' => ['GET', 'POST', 'OPTIONS'],
                     // 允许的自定义 Headers
-            'Access-Control-Request-Headers' => ['*'],
-            // 是否允许带有 Cookies
-            'Access-Control-Allow-Credentials' => true,
-            // 缓存 CORS 预检请求的秒数
-            'Access-Control-Max-Age' => 3600,
+                    'Access-Control-Request-Headers' => ['*'],
+                    // 是否允许带有 Cookies
+                    'Access-Control-Allow-Credentials' => true,
+                    // 缓存 CORS 预检请求的秒数
+                    'Access-Control-Max-Age' => 3600,
                 ],
             ],
         ];

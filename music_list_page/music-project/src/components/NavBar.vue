@@ -38,12 +38,16 @@
       </div>
 
       <div class="overlay-results">
-        <p v-if="results.length === 0">没有找到相关结果</p>
+        <p v-if="results.length === 0 && searchText">没有找到与 "{{ searchText }}" 相关的内容</p>
         <ul v-if="results.length > 0">
-          <li v-for="(result, index) in results" :key="index">
-            <h3>{{ result.title }}</h3>
-            <p>{{ result.content }}</p>
-            <p>得分：{{ result.score }}</p>
+          <li
+            v-for="(result, index) in results"
+            :key="index"
+            @click="navigateToPlaylist(result.PlaylistID)"
+            class="search-result-item"
+          >
+            <h3>{{ result.Title }}</h3>
+            <p>{{ result.Description }}</p>
           </li>
         </ul>
       </div>
@@ -52,14 +56,19 @@
 </template>
 
 <script>
+import axios from "axios";
+
 export default {
   data() {
     return {
       searchText: "", // 搜索内容
       showSearchOverlay: false, // 是否显示搜索弹窗
       results: [], // 搜索结果
-      user: "user1", // 当前用户（示例）
+      allPlaylists: [], // 存储所有歌单数据
     };
+  },
+  mounted() {
+    this.loadPlaylists(); // 页面加载时获取所有歌单
   },
   methods: {
     getCurrentMenuUrl() {
@@ -73,66 +82,45 @@ export default {
       this.searchText = "";
       this.results = [];
     },
-    performSearch() {
-      if (!this.searchText.trim()) return;
-      this.results = this.searchAndSort(this.searchText, this.user); // 调用内部方法
+    async loadPlaylists() {
+      try {
+        const response = await axios.get("http://localhost:8080/index.php?r=api/get-playlists", {
+          withCredentials: true, // 如果需要发送跨域 Cookie
+        });
+        if (response.data.status === 1) {
+          this.allPlaylists = response.data.data.playlists; // 存储所有歌单数据
+        } else {
+          console.error("加载歌单失败：", response.data.message);
+        }
+      } catch (error) {
+        console.error("请求歌单数据时发生错误：", error);
+      }
     },
-    searchAndSort(query) {
-      const mockData = [
-        {
-          id: 1,
-          title: "流行音乐精选",
-          content: "流行音乐总能打动人心，让人沉浸在动感节拍中。",
-        },
-        {
-          id: 2,
-          title: "经典摇滚合集",
-          content: "摇滚乐的狂野与自由让人无法自拔。",
-        },
-        {
-          id: 3,
-          title: "舒缓轻音乐",
-          content: "轻音乐适合放松心情，享受片刻宁静。",
+    performSearch() {
+      if (!this.searchText.trim()) {
+        this.results = [];
+        return;
+      }
 
-        },
-        {
-          id: 4,
-          title: "电子舞曲之夜",
-          content: "电子舞曲充满动感和激情，是派对的最佳伴侣。",
-      
-        },
-      ];
-
-      const lowerQuery = query.toLowerCase();
-      let results = [];
-
-      mockData.forEach((item) => {
-        let score = 0;
-
-      
-        // 标题匹配逻辑
-        if (item.title.toLowerCase().includes(lowerQuery)) {
-          const matchCount = item.title.toLowerCase().split(lowerQuery).length - 1; // 匹配次数
-          score += (2 / item.title.length) * 100 * matchCount; // 字段长度加权，匹配次数加权
-        }
-
-        // 内容匹配逻辑
-        if (item.content.toLowerCase().includes(lowerQuery)) {
-          const matchCount = item.content.toLowerCase().split(lowerQuery).length - 1; // 匹配次数
-          score += (1 / item.content.length) * 100 * matchCount; // 字段长度加权，匹配次数加权
-        }
-
-        if (score > 0) {
-          results.push({ ...item, score });
-        }
+      const lowerQuery = this.searchText.toLowerCase();
+      this.results = this.allPlaylists.filter((playlist) => {
+        return (
+          playlist.Title.toLowerCase().includes(lowerQuery) ||
+          playlist.Description.toLowerCase().includes(lowerQuery)
+        );
       });
-
-      results.sort((a, b) => b.score - a.score);
-      return results;
+    },
+    navigateToPlaylist(playlistId) {
+      // 跳转到对应歌单页面
+      this.$router.push({ path: "/playlist", query: { id: playlistId } });
+      this.closeSearchOverlay(); // 关闭搜索弹窗
     },
   },
 };
 </script>
+
+
+
 <style scoped>
 /* 导航栏样式 */
 .el-menu {

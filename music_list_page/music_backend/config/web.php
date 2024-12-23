@@ -44,6 +44,14 @@ $config = [
                 ],
             ],
         ],
+        'as corsFilter' => [
+            'class' => \yii\filters\Cors::class,
+            'cors' => [
+                'Origin' => ['http://localhost:8081'], // 允许的前端地址
+                'Access-Control-Request-Method' => ['GET', 'POST', 'OPTIONS'],
+                'Access-Control-Allow-Credentials' => true,
+            ],
+        ],
         'db' => $db,
         /*
         'urlManager' => [
