@@ -18,7 +18,7 @@
 
     <!-- 搜索图标 -->
     <img
-      src="music-project/assets/images/icon/fdj.png"
+      src="/music-project/assets/images/icon/fdj.png"
       alt="搜索"
       @click="openSearchOverlay"
       class="search-toggle"

@@ -98,6 +98,7 @@ export default {
         const response = await axios.get("http://localhost:8080/index.php?r=api/get-user-info", {
           withCredentials: true, // 确保携带 Session/Cookie
         });
+        
         if (response.data.status === 1) {
           this.user = response.data.user; // 将用户数据存储到 user 中
         } else {

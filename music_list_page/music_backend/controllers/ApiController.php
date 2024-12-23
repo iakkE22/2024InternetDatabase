@@ -13,27 +13,6 @@ class ApiController extends Controller
     // 用户登录 API
     public function actionLogin()
     {
-
-        // \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-    
-        // $username = \Yii::$app->request->get('username');
-        // $password = \Yii::$app->request->get('password');
-    
-        // if ($username !== null && $password !== null) {
-        //     // 查询数据库检查用户名和密码是否匹配
-        //     $user = Users::find()
-        //         ->where(['Username' => $username])
-        //         ->one();
-    
-        //     if ($user !== null && ($password == $user->Password)) {
-        //         // 用户名和密码匹配
-        //         return ['status' => 1];
-        //     } else {
-        //         // 用户名和密码不匹配
-        //         return ['status' => 0, 'message' => '用户名或密码错误'];
-        //     }
-        // }
-        // return ['status' => -1, 'message' => '参数缺失'];
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
 
         $username = \Yii::$app->request->get('username');
@@ -215,67 +194,67 @@ class ApiController extends Controller
     }
 
     public function actionGetSongs($id)
-{
-    \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+    {
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
 
-    try {
-        // 查询歌单信息
-        $playlist = (new \yii\db\Query())
-            ->select(['PlaylistID', 'Title', 'Description', 'CoverImage'])
-            ->from('playlists')
-            ->where(['PlaylistID' => $id])
-            ->one();
+        try {
+            // 查询歌单信息
+            $playlist = (new \yii\db\Query())
+                ->select(['PlaylistID', 'Title', 'Description', 'CoverImage'])
+                ->from('playlists')
+                ->where(['PlaylistID' => $id])
+                ->one();
 
-        if (!$playlist) {
+            if (!$playlist) {
+                return [
+                    'status' => 0,
+                    'message' => '歌单不存在',
+                ];
+            }
+
+            // 查询歌单的歌曲信息
+            $songs = (new \yii\db\Query())
+                ->select([
+                    'songs.SongID',
+                    'songs.Title',
+                    'songs.ArtistID', // 歌手 ID
+                    'songs.FilePath',
+                    'songs.CoverImage',
+                ])
+                ->from('playlist_songs')
+                ->innerJoin('songs', 'playlist_songs.SongID = songs.SongID')
+                ->where(['playlist_songs.PlaylistID' => $id])
+                ->orderBy(['playlist_songs.OrderIndex' => SORT_ASC])
+                ->all();
+
+            // 查询歌单的评论信息
+            $comments = (new \yii\db\Query())
+                ->select([
+                    'playlistcomments.CommentID',
+                    'playlistcomments.UserID',
+                    'playlistcomments.CommentText',
+                    'playlistcomments.CommentDate',
+                ])
+                ->from('playlistcomments')
+                ->where(['playlistcomments.PlaylistID' => $id])
+                ->orderBy(['playlistcomments.CommentDate' => SORT_DESC]) // 按评论时间倒序排列
+                ->all();
+
+            return [
+                'status' => 1,
+                'data' => [
+                    'playlist' => $playlist,
+                    'songs' => $songs,
+                    'comments' => $comments,
+                ],
+            ];
+        } catch (\Exception $e) {
             return [
                 'status' => 0,
-                'message' => '歌单不存在',
+                'message' => $e->getMessage(),
             ];
         }
-
-        // 查询歌单的歌曲信息
-        $songs = (new \yii\db\Query())
-            ->select([
-                'songs.SongID',
-                'songs.Title',
-                'songs.ArtistID', // 歌手 ID
-                'songs.FilePath',
-                'songs.CoverImage',
-            ])
-            ->from('playlist_songs')
-            ->innerJoin('songs', 'playlist_songs.SongID = songs.SongID')
-            ->where(['playlist_songs.PlaylistID' => $id])
-            ->orderBy(['playlist_songs.OrderIndex' => SORT_ASC])
-            ->all();
-
-        // 查询歌单的评论信息
-        $comments = (new \yii\db\Query())
-            ->select([
-                'playlistcomments.CommentID',
-                'playlistcomments.UserID',
-                'playlistcomments.CommentText',
-                'playlistcomments.CommentDate',
-            ])
-            ->from('playlistcomments')
-            ->where(['playlistcomments.PlaylistID' => $id])
-            ->orderBy(['playlistcomments.CommentDate' => SORT_DESC]) // 按评论时间倒序排列
-            ->all();
-
-        return [
-            'status' => 1,
-            'data' => [
-                'playlist' => $playlist,
-                'songs' => $songs,
-                'comments' => $comments,
-            ],
-        ];
-    } catch (\Exception $e) {
-        return [
-            'status' => 0,
-            'message' => $e->getMessage(),
-        ];
     }
-}
 
 
     public function actionGetMvs()
@@ -302,7 +281,65 @@ class ApiController extends Controller
         }
     }
 
+    public function actionAddComment()
+    {
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
 
+        try {
+            $request = \Yii::$app->request;
+            $session = \Yii::$app->session;
+
+            // 检查用户是否登录
+            if (!$session->has('user')) {
+                throw new \Exception("用户未登录");
+            }
+
+            $user = $session->get('user');
+            $userID = $user['id']; // 获取当前登录用户的 ID
+
+            // 获取请求参数
+            $playlistID = $request->post('PlaylistID');
+            $commentText = $request->post('CommentText');
+            // 调试日志
+            error_log("Received PlaylistID: " . json_encode($playlistID));
+            error_log("Received CommentText: " . json_encode($commentText));
+            // 参数校验
+            if (empty($playlistID) || empty($commentText)) {
+                throw new \Exception("参数不完整，请提供 PlaylistID 和 CommentText");
+            }
+
+            // 插入评论到数据库
+            $result = \Yii::$app->db->createCommand()->insert('playlistcomments', [
+                'PlaylistID' => $playlistID,
+                'UserID' => $userID,
+                'CommentText' => $commentText,
+                'CommentDate' => date('Y-m-d H:i:s')
+            ])->execute();
+
+            if ($result) {
+                $commentID = \Yii::$app->db->getLastInsertID(); // 获取插入的评论 ID
+
+                return [
+                    'status' => 1,
+                    'message' => '评论添加成功',
+                    'data' => [
+                        'CommentID' => $commentID,
+                        'UserID' => $userID,
+                        'PlaylistID' => $playlistID,
+                        'CommentText' => $commentText,
+                        'CommentDate' => date('Y-m-d H:i:s')
+                    ]
+                ];
+            } else {
+                throw new \Exception("数据库插入失败");
+            }
+        } catch (\Exception $e) {
+            return [
+                'status' => 0,
+                'message' => $e->getMessage()
+            ];
+        }
+    }
     public function behaviors()
     {
         return [

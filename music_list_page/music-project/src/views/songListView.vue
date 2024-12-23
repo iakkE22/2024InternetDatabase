@@ -29,6 +29,18 @@
           </div>
         </div>
 
+        <!-- 评论输入框 -->
+        <div class="comment-input">
+          <textarea
+            v-model="newCommentText"
+            placeholder="输入你的评论..."
+            class="comment-textarea"
+          ></textarea>
+          <button @click="submitComment" class="comment-submit-button">
+            提交评论
+          </button>
+        </div>
+
         <!-- 评论区 -->
         <div class="comments-section">
           <h2>评论</h2>
@@ -47,8 +59,6 @@
   </div>
 </template>
 
-
-
 <script>
 import axios from "axios";
 import MusicPlayer from "@/components/MusicPlayer.vue";
@@ -56,66 +66,129 @@ import MusicPlayer from "@/components/MusicPlayer.vue";
 export default {
   components: { MusicPlayer },
   data() {
-      return {
-        playlist: null, // 当前歌单信息
-        songs: [], // 当前歌单的歌曲列表
-        comments: [], // 评论列表
-        currentSong: {
-          Title: "未播放歌曲", // 默认歌曲信息
-          ArtistID: "未知歌手",
-          CoverImage: "/music-project/assets/images/song_covers/default-cover.jpg",
-          url: ""
-        } // 当前播放的歌曲
-      };
-    },
-    mounted() {
-      this.fetchPlaylistData();
-    },
+    return {
+      playlist: null, // 当前歌单信息
+      songs: [], // 当前歌单的歌曲列表
+      comments: [], // 评论列表
+      newCommentText: "",
+      userInfo: null, // 登录的用户信息
+      currentSong: {
+        Title: "未播放歌曲", // 默认歌曲信息
+        ArtistID: "未知歌手",
+        CoverImage: "/music-project/assets/images/song_covers/default-cover.jpg",
+        url: ""
+      } // 当前播放的歌曲
+    };
+  },
+  mounted() {
+    this.fetchUserInfo();
+    this.fetchPlaylistData();
+  },
   methods: {
+    // 获取用户信息，判断是否登录
+    async fetchUserInfo() {
+      try {
+        const response = await axios.get("http://localhost:8080/index.php?r=api/get-user-info", {
+          withCredentials: true, // 确保携带 Session/Cookie
+        });
+        
+        if (response.data.status === 1) {
+          this.userInfo = response.data.user; // 将用户数据存储到 user 中
+        } else {
+          alert("获取用户信息失败，请重新登录！");
+          window.location.href = "/login"; // 如果未登录，跳转到登录页面
+        }
+      } catch (error) {
+        console.error("Failed to fetch user info:", error);
+        alert("获取用户信息时发生错误，请稍后重试！");
+      }
+    },
     async fetchPlaylistData() {
-        const playlistID = this.$route.query.id; // 从 URL 获取 playlistID
-        if (!playlistID) {
-          console.error("未提供 playlistID");
-          return;
+      const playlistID = this.$route.query.id; // 从 URL 获取 playlistID
+      if (!playlistID) {
+        console.error("未提供 playlistID");
+        return;
+      }
+
+      try {
+        // 调用后端接口，获取歌单和歌曲信息
+        const response = await axios.get(
+          `http://localhost:8080/index.php?r=api/get-songs&id=${playlistID}`
+        );
+
+        if (response.data.status === 1) {
+          this.playlist = response.data.data.playlist; // 歌单信息
+          this.songs = response.data.data.songs; // 歌曲信息
+          this.comments = response.data.data.comments; // 评论信息
+        } else {
+          console.error("加载歌单信息失败:", response.data.message);
         }
-  
-        try {
-          // 调用后端接口，获取歌单和歌曲信息
-          const response = await axios.get(
-            `http://localhost:8080/index.php?r=api/get-songs&id=${playlistID}`
-          );
-  
-          if (response.data.status === 1) {
-            this.playlist = response.data.data.playlist; // 歌单信息
-            this.songs = response.data.data.songs; // 歌曲信息
-            this.comments = response.data.data.comments; // 评论信息
-          } else {
-            console.error("加载歌单信息失败:", response.data.message);
-          }
-        } catch (error) {
-          console.error("加载歌单数据出错:", error);
-        }
-      },
+      } catch (error) {
+        console.error("加载歌单数据出错:", error);
+      }
+    },
     // 播放歌曲
     playSong(song) {
       this.currentSong = song; // 更新当前播放歌曲的信息
+    },
+    // 提交评论
+    async submitComment() {
+      if (!this.newCommentText.trim()) {
+        alert("评论内容不能为空！");
+        return;
+      }
+
+      const playlistID = this.$route.query.id;
+      if (!playlistID) {
+        console.error("未提供 playlistID");
+        return;
+      }
+
+      try {
+        const response = await axios.post(
+          "http://localhost:8080/index.php?r=api/add-comment",
+          {
+            PlaylistID: playlistID,
+            CommentText: this.newCommentText
+          },
+          {
+            withCredentials: true // 确保携带 Session/Cookie
+          }
+        );
+
+        if (response.data.status === 1) {
+          console.log("评论添加成功:", response.data.data);
+          this.comments.unshift({
+            CommentID: response.data.data.CommentID,
+            UserID: response.data.data.UserID,
+            CommentText: this.newCommentText,
+            CommentDate: new Date().toISOString() // 临时显示时间
+          });
+          this.newCommentText = ""; // 清空输入框
+        } else {
+          console.error("添加评论失败:", response.data.message);
+        }
+      } catch (error) {
+        console.error("添加评论时出错:", error);
+      }
     }
   }
 };
 </script>
+
 <style scoped>
 /* 页面容器 */
 .page-container {
   display: flex;
   justify-content: center;
   padding: 20px;
-  width: 100%; /* 确保占满视口宽度 */
+  width: 100%;
 }
 
 /* 主内容 */
 .main-content {
-  width: 100%; /* 主内容占满页面 */
-  max-width: 800px; /* 设置最大宽度 */
+  width: 100%;
+  max-width: 800px;
 }
 
 /* 歌单头部区域样式 */
@@ -186,7 +259,7 @@ export default {
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  margin-top: 80px; /* 与歌曲列表的间距 */
+  margin-top: 20px;
 }
 .comments-section h2 {
   font-size: 20px;
@@ -206,15 +279,32 @@ export default {
   color: #666;
 }
 
-/* 确保页面可以滚动 */
-body {
-  margin: 0;
-  padding: 0;
-  overflow-y: auto; /* 启用垂直滚动 */
-  height: 100%;
+/* 评论输入框 */
+.comment-input {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
-
-html {
-  height: 100%;
+.comment-textarea {
+  width: 100%;
+  height: 80px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 10px;
+  resize: none;
+}
+.comment-submit-button {
+  align-self: flex-end;
+  background-color: #007bff;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+.comment-submit-button:hover {
+  background-color: #0056b3;
 }
 </style>

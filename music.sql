@@ -11,7 +11,7 @@
  Target Server Version : 80036
  File Encoding         : 65001
 
- Date: 23/12/2024 01:00:12
+ Date: 23/12/2024 14:30:00
 */
 
 SET NAMES utf8mb4;
@@ -49,6 +49,7 @@ CREATE TABLE `artists`  (
 -- Records of artists
 -- ----------------------------
 INSERT INTO `artists` VALUES (1, '祁厅长', '祁同伟，别称“祁厅长”。 电视剧《人民的名义》中的反派角色，由许亚军饰演。 剧中设定为汉东省公安厅长，毕业于汉东大学政法系，同时也是高育良学生、侯亮平和陈海学长。 其形象部分参考了天津市公安局原党委书记武长顺的案例。', '/uploads/profiles/artist1.jpg');
+INSERT INTO `artists` VALUES (2, '木棉', '可以的', '/uploads/profiles/artist1.jpg');
 
 -- ----------------------------
 -- Table structure for developers
@@ -112,6 +113,29 @@ CREATE TABLE `mvlikes`  (
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
+-- Table structure for playlist_songs
+-- ----------------------------
+DROP TABLE IF EXISTS `playlist_songs`;
+CREATE TABLE `playlist_songs`  (
+  `PlaylistID` int(0) NOT NULL,
+  `SongID` int(0) NOT NULL,
+  `AddedDate` datetime(0) NULL DEFAULT CURRENT_TIMESTAMP,
+  `OrderIndex` int(0) NULL DEFAULT NULL,
+  PRIMARY KEY (`PlaylistID`, `SongID`) USING BTREE,
+  INDEX `SongID`(`SongID`) USING BTREE,
+  CONSTRAINT `playlist_songs_ibfk_1` FOREIGN KEY (`PlaylistID`) REFERENCES `playlists` (`PlaylistID`) ON DELETE CASCADE ON UPDATE RESTRICT,
+  CONSTRAINT `playlist_songs_ibfk_2` FOREIGN KEY (`SongID`) REFERENCES `songs` (`SongID`) ON DELETE CASCADE ON UPDATE RESTRICT
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of playlist_songs
+-- ----------------------------
+INSERT INTO `playlist_songs` VALUES (1, 2, '2024-12-23 02:03:31', 1);
+INSERT INTO `playlist_songs` VALUES (1, 3, '2024-12-23 02:03:32', 2);
+INSERT INTO `playlist_songs` VALUES (1, 4, '2024-12-23 02:03:34', 3);
+INSERT INTO `playlist_songs` VALUES (1, 5, '2024-12-23 02:03:35', 4);
+
+-- ----------------------------
 -- Table structure for playlistcomments
 -- ----------------------------
 DROP TABLE IF EXISTS `playlistcomments`;
@@ -127,6 +151,13 @@ CREATE TABLE `playlistcomments`  (
   CONSTRAINT `playlistcomments_ibfk_1` FOREIGN KEY (`PlaylistID`) REFERENCES `playlists` (`PlaylistID`) ON DELETE RESTRICT ON UPDATE RESTRICT,
   CONSTRAINT `playlistcomments_ibfk_2` FOREIGN KEY (`UserID`) REFERENCES `users` (`UserID`) ON DELETE RESTRICT ON UPDATE RESTRICT
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of playlistcomments
+-- ----------------------------
+INSERT INTO `playlistcomments` VALUES (1, 1, 1, '你好你好', '2024-12-23 12:01:19');
+INSERT INTO `playlistcomments` VALUES (2, 2, 1, '你好', '2024-12-23 07:28:59');
+INSERT INTO `playlistcomments` VALUES (3, 1, 1, '请进行评论', '2024-12-23 07:29:21');
 
 -- ----------------------------
 -- Table structure for playlistlikes
@@ -149,6 +180,16 @@ CREATE TABLE `playlists`  (
   `CoverImage` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
   PRIMARY KEY (`PlaylistID`) USING BTREE
 ) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of playlists
+-- ----------------------------
+INSERT INTO `playlists` VALUES (1, '轻音乐', '舒缓心情的轻音乐', '/music-project/assets/images/playlist_covers/light.jpg');
+INSERT INTO `playlists` VALUES (2, '流行经典', '精选流行音乐合集', '/music-project/assets/images/playlist_covers/edm.jpg');
+INSERT INTO `playlists` VALUES (3, '电子舞曲', '动感十足的电子乐', '/music-project/assets/images/playlist_covers/pop.jpg');
+INSERT INTO `playlists` VALUES (4, '摇滚经典', '不可错过的摇滚金曲', '/music-project/assets/images/playlist_covers/rock.jpg');
+INSERT INTO `playlists` VALUES (5, '爵士乐', '品味高雅的爵士乐', '/music-project/assets/images/playlist_covers/jazz.jpg');
+INSERT INTO `playlists` VALUES (6, '古典音乐', '经典永恒的古典之声', '/music-project/assets/images/playlist_covers/classical.jpg');
 
 -- ----------------------------
 -- Table structure for songcomments
@@ -191,6 +232,7 @@ CREATE TABLE `songs`  (
   `Title` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `ArtistID` int(0) NOT NULL,
   `FilePath` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `CoverImage` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '',
   PRIMARY KEY (`SongID`) USING BTREE,
   INDEX `ArtistID`(`ArtistID`) USING BTREE,
   CONSTRAINT `songs_ibfk_1` FOREIGN KEY (`ArtistID`) REFERENCES `artists` (`ArtistID`) ON DELETE RESTRICT ON UPDATE RESTRICT
@@ -199,7 +241,11 @@ CREATE TABLE `songs`  (
 -- ----------------------------
 -- Records of songs
 -- ----------------------------
-INSERT INTO `songs` VALUES (1, '鸳鸯戏', 1, '/uploads/musics/鸳鸯戏.mp3');
+INSERT INTO `songs` VALUES (1, '鸳鸯戏', 1, '/uploads/musics/鸳鸯戏.mp3', '/music-project/assets/images/song_covers/cto.jpg');
+INSERT INTO `songs` VALUES (2, 'native-american-flute', 2, '@\\assets\\audio\\lightmusics\\native-american-flute-277509.mp3', '/music-project/assets/images/song_covers/cto.jpg');
+INSERT INTO `songs` VALUES (3, 'passacaglia', 2, '@\\assets\\audio\\lightmusics\\passacaglia-204294.mp3', '/music-project/assets/images/song_covers/cto.jpg');
+INSERT INTO `songs` VALUES (4, 'snowfall', 2, '@\\assets\\audio\\lightmusics\\snowfall-ambient-music-258684.mp3', '/music-project/assets/images/song_covers/cto.jpg');
+INSERT INTO `songs` VALUES (5, 'soft-synth', 2, '@\\assets\\audio\\lightmusics\\soft-synth-music-242044.mp3', '/music-project/assets/images/song_covers/cto.jpg');
 
 -- ----------------------------
 -- Table structure for users
