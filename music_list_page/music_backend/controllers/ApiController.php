@@ -511,31 +511,62 @@ class ApiController extends Controller
             ],
         ];
     }
-    public function actionGetSong($id)
+//     public function actionGetSong($id)
+// {
+//     \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+//     try {
+//         // 查询单首歌曲的信息
+//         $song = (new \yii\db\Query())
+//             ->select(['SongID', 'Title', 'ArtistID', 'FilePath', 'CoverImage'])
+//             ->from('songs')
+//             ->where(['SongID' => $id])
+//             ->one();
+
+//         if (!$song) {
+//             return [
+//                 'status' => 0,
+//                 'message' => '歌曲不存在',
+//             ];
+//         }
+
+//         return [
+//             'status' => 1,
+//             'data' => [
+//                 'song' => $song,
+//             ],
+//         ];
+//     } catch (\Exception $e) {
+//         return [
+//             'status' => 0,
+//             'message' => $e->getMessage(),
+//         ];
+//     }
+// }
+public function actionGetRandomPlaylistId()
 {
     \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
 
     try {
-        // 查询单首歌曲的信息
-        $song = (new \yii\db\Query())
-            ->select(['SongID', 'Title', 'ArtistID', 'FilePath', 'CoverImage'])
-            ->from('songs')
-            ->where(['SongID' => $id])
+        // 从数据库中随机获取一个 playlistID
+        $randomPlaylist = (new \yii\db\Query())
+            ->select(['PlaylistID'])
+            ->from('playlists')
+            ->orderBy(new \yii\db\Expression('RAND()')) // 使用 RAND() 随机排序
+            ->limit(1) // 只取一条记录
             ->one();
 
-        if (!$song) {
+        if ($randomPlaylist) {
+            return [
+                'status' => 1,
+                'data' => $randomPlaylist,
+            ];
+        } else {
             return [
                 'status' => 0,
-                'message' => '歌曲不存在',
+                'message' => '没有找到歌单',
             ];
         }
-
-        return [
-            'status' => 1,
-            'data' => [
-                'song' => $song,
-            ],
-        ];
     } catch (\Exception $e) {
         return [
             'status' => 0,

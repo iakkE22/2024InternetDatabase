@@ -78,7 +78,8 @@ export default {
         ArtistID: "未知歌手",
         CoverImage: "/music-project/assets/images/song_covers/default-cover.jpg",
         url: ""
-      } // 当前播放的歌曲
+      }, // 当前播放的歌曲
+      defaultPlaylistID: 6, // 默认的歌单 ID（推荐歌单）
     };
   },
   mounted() {
@@ -89,9 +90,12 @@ export default {
     // 获取用户信息，判断是否登录
     async fetchUserInfo() {
       try {
-        const response = await axios.get("http://localhost:8080/index.php?r=api/get-user-info", {
-          withCredentials: true, // 确保携带 Session/Cookie
-        });
+        const response = await axios.get(
+          "http://localhost:8080/index.php?r=api/get-user-info",
+          {
+            withCredentials: true, // 确保携带 Session/Cookie
+          }
+        );
         
         if (response.data.status === 1) {
           this.userInfo = response.data.user; // 将用户数据存储到 user 中
@@ -105,12 +109,23 @@ export default {
       }
     },
     async fetchPlaylistData() {
-      const playlistID = this.$route.query.id; // 从 URL 获取 playlistID
-      if (!playlistID) {
-        console.error("未提供 playlistID");
+      let playlistID = this.$route.query.id; // 从 URL 获取 playlistID
+  if (!playlistID) {
+    try {
+      // 如果 URL 中没有提供 ID，随机获取一个 playlistID
+      const randomResponse = await axios.get("http://localhost:8080/index.php?r=api/get-random-playlist-id");
+      if (randomResponse.data.status === 1) {
+        playlistID = randomResponse.data.data.PlaylistID;
+        this.$router.replace({ query: { id: playlistID } }); // 更新 URL
+      } else {
+        console.error("随机获取歌单失败:", randomResponse.data.message);
         return;
       }
-
+    } catch (error) {
+      console.error("获取随机歌单 ID 时出错:", error);
+      return;
+    }
+  }
       try {
         // 调用后端接口，获取歌单和歌曲信息
         const response = await axios.get(
