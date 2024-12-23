@@ -66,6 +66,7 @@ export default {
         );
         if (response.data.status === 1) {
           this.video = response.data.data.video;
+          this.video.LikeCount = Number(this.video.LikeCount); // 确保 LikeCount 是数值类型
         } else {
           alert("加载视频详情失败！");
         }
@@ -98,7 +99,7 @@ export default {
           { MVID: this.video.MVID }
         );
         if (response.data.status === 1) {
-          this.video.LikeCount += 1;
+          this.video.LikeCount = Number(this.video.LikeCount) + 1; // 确保 LikeCount 是数字
         } else {
           console.error("点赞失败：", response.data.message);
         }
