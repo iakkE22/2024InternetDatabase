@@ -16,7 +16,7 @@ const router = createRouter({
       name: 'home',
       component: () => import('../views/homepage.vue'),
       meta: {
-        showNavBar: false
+        showNavBar: true
       }
     },
     {
@@ -24,7 +24,7 @@ const router = createRouter({
         name: 'aboutus',
         component: () => import('../views/AboutUsView.vue'),
         meta: {
-          showNavBar: false
+          showNavBar: true
         }
       },
     {
@@ -32,11 +32,21 @@ const router = createRouter({
         name: 'userpage',
         component: () => import('../views/UserPageView.vue'),
         meta: {
-          showNavBar: false
+          showNavBar: true
         }
       },
+      {
+        path: "/video",
+        name: "videoList",
+        component: () => import("../views/VideoListView.vue"),
+      },
+      {
+        path: "/video/:id",
+        name: "videoDetail",
+        component: () => import("../views/VideoDetailView.vue"),
+      },
     {
-      path: '/playlist',
+      path: '/list',
       name: 'songlist',
       component: () => import('../views/songListView.vue'),
       meta: {
@@ -45,6 +55,10 @@ const router = createRouter({
     },
   ]
 })
+router.beforeEach((to, from, next) => {
+  console.log("目标路由 meta 信息：", to.meta);
+  next();
+});
 
 // router.beforeEach((to, from, next) => {
 //   const Username = sessionStorage.getItem('Username')

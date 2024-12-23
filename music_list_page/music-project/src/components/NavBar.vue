@@ -11,8 +11,8 @@
     <!-- 菜单项 -->
     <el-menu-item index="/">首页</el-menu-item>
     <div class="flex-grow" />
-    <el-menu-item index="/article">视频</el-menu-item>
-    <el-menu-item index="/playlist">音乐</el-menu-item>
+    <el-menu-item index="/video">视频</el-menu-item>
+    <el-menu-item index="/list">音乐</el-menu-item>
     <el-menu-item index="/aboutus">关于</el-menu-item>
     <el-menu-item index="/user">个人</el-menu-item>
 

@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- 顶部导航栏 -->
-    <div class="App-Header">
+    <div v-if="show" class="App-Header">
       <NavBar />
     </div>
 
@@ -9,17 +9,31 @@
     <div class="App-Containner">
       <router-view />
     </div>
+        <!-- 音乐播放器 -->
+        <div v-if="show">
+      <MPlayer />
+    </div>
   </div>
 </template>
 <script>
 // 导入 NavBar 组件
 import NavBar from "@/components/NavBar.vue";
+// 导入 NavBar 组件
+import MPlayer from "@/components/MusicPlayer.vue";
 
 export default {
   // 注册 NavBar 组件
   components: {
-    NavBar
-  }
+    NavBar,
+    MPlayer
+  },
+  computed: {
+    show() {
+      const meta = this.$route.meta
+      console.log("当前路由 meta 信息：", meta); // 调试 meta 信息
+      return !meta || meta.showNavBar !== false
+    }
+  },
 };
 </script>
 <style>
