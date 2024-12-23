@@ -4,19 +4,19 @@
     <div class="video-grid">
       <div
         class="video-item"
-        v-for="(video, index) in videos"
-        :key="index"
-        @click="goToVideoDetail(video)"
+        v-for="video in videos"
+        :key="video.MVID"
+        @click="goToVideoDetail(video.MVID)"
       >
-        <!-- 视频缩略图 -->
-        <img :src="video.thumbnail" alt="视频缩略图" />
+        <!-- 视频封面 -->
+        <img :src="video.CoverImage || '/music-project/assets/images/loading.gif'" alt="视频封面" />
         <!-- 视频信息和点赞按钮 -->
         <div class="video-info">
           <div class="info-left">
-            <h3>{{ video.title }}</h3>
-            <p class="views">{{ video.views }} 次观看</p>
+            <h3>{{ video.Title }}</h3>
+            <p class="views">{{ video.LikeCount }} 次点赞</p>
           </div>
-          <LikeButton :likes="video.likes" @like="handleLike(video.id)" />
+          <LikeButton :likes="video.LikeCount" @like="handleLike(video.MVID)" />
         </div>
       </div>
     </div>
@@ -32,54 +32,64 @@ export default {
   },
   data() {
     return {
-      videos: [
-        {
-          id: 1,
-          title: "Bejewled",
-          thumbnail: "/music-project/assets/images/song_covers/BejewledCover.jpg", // 视频缩略图
-          views: "1.2万", // 浏览次数
-        },
-        {
-          id: 2,
-          title: "Whiplash",
-          thumbnail: "/music-project/assets/images/song_covers/WhiplashCover.jpg",
-          views: "3.4万",
-        },
-        {
-          id: 3,
-          title: "启示录",
-          thumbnail: "/music-project/assets/images/song_covers/启示录cover.jpg",
-          views: "2.8万",
-        },
-        {
-          id: 4,
-          title: "Accidino",
-          thumbnail: "/music-project/assets/images/song_covers/AccidinoCover.jpg",
-          views: "1.1万",
-        },
-        {
-          id: 5,
-          title: "Queencard",
-          thumbnail: "/music-project/assets/images/song_covers/QueencardCover.jpg",
-          views: "1.1万",
-        },
-      ],
+      videos: [], // 视频数据
     };
   },
-  methods: {  
-    handleLike(videoId) {
-      const video = this.videos.find((v) => v.id === videoId);
-      if (video) {
-        video.likes += 1;
-        console.log(`Liked video with ID: ${videoId}, new likes count: ${video.likes}`);
+  mounted() {
+    this.fetchVideos(); // 页面加载时获取视频数据
+  },
+  methods: {
+    // 获取视频数据
+    async fetchVideos() {
+      try {
+        const response = await fetch("http://localhost:8080/index.php?r=api/get-mvs");
+        const data = await response.json();
+        if (data.status === 1) {
+          this.videos = data.data.mvs; // 直接使用后端返回的数据
+        } else {
+          console.error("获取视频数据失败：", data.message);
+        }
+      } catch (error) {
+        console.error("请求视频数据时出错：", error);
       }
     },
-    goToVideoDetail(video) {
-      this.$router.push({ name: "videoDetail", params: { id: video.id } });
+    // 跳转到视频详情页
+    goToVideoDetail(MVID) {
+      this.$router.push({
+        name: "videoDetail",
+        params: { id: MVID },
+      });
+    },
+    // 处理点赞
+    async handleLike(MVID) {
+      try {
+        const video = this.videos.find((v) => v.MVID === MVID);
+        if (!video) return;
+
+        const originalLikeCount = video.LikeCount;
+        video.LikeCount += 1;
+
+        const response = await fetch("http://localhost:8080/index.php?r=api/like-mv", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ MVID }),
+        });
+
+        const data = await response.json();
+        if (data.status !== 1) {
+          video.LikeCount = originalLikeCount; // 如果失败，回滚点赞数
+          console.error("点赞失败：", data.message);
+        }
+      } catch (error) {
+        console.error("点赞时发生错误：", error);
+      }
     },
   },
 };
 </script>
+
 <style scoped>
 .video-list {
   padding: 20px;
@@ -89,11 +99,11 @@ export default {
   display: flex;
   flex-wrap: wrap;
   gap: 30px;
-  justify-content: center; /* 居中排列 */
+  justify-content: center;
 }
 
 .video-item {
-  width: 320px; /* 增大宽度 */
+  width: 320px;
   cursor: pointer;
   transition: transform 0.3s ease;
 }
@@ -104,20 +114,19 @@ export default {
 
 .video-item img {
   width: 100%;
-  height: 180px; /* 增加图片高度 */
+  height: 180px;
   border-radius: 8px;
-  margin-bottom: 10px; /* 间距 */
+  margin-bottom: 10px;
 }
 
 /* 视频信息区域 */
 .video-info {
   display: flex;
-  justify-content: space-between; /* 左右分布 */
-  align-items: center; /* 垂直居中 */
-  margin-top: 10px; /* 与图片的间距 */
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
 }
 
-/* 信息左侧：标题和观看次数 */
 .info-left h3 {
   margin: 0;
   font-size: 16px;

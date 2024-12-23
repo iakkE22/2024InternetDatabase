@@ -33,6 +33,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'Title',
             'ArtistID',
             'VideoPath',
+            'CoverImage',
         ],
     ]) ?>
 

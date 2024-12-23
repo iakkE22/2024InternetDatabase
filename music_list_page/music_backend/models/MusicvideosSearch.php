@@ -18,7 +18,7 @@ class MusicvideosSearch extends Musicvideos
     {
         return [
             [['MVID', 'ArtistID'], 'integer'],
-            [['Title', 'VideoPath'], 'safe'],
+            [['Title', 'VideoPath', 'CoverImage'], 'safe'],
         ];
     }
 
@@ -63,7 +63,8 @@ class MusicvideosSearch extends Musicvideos
         ]);
 
         $query->andFilterWhere(['like', 'Title', $this->Title])
-            ->andFilterWhere(['like', 'VideoPath', $this->VideoPath]);
+            ->andFilterWhere(['like', 'VideoPath', $this->VideoPath])
+            ->andFilterWhere(['like', 'CoverImage', $this->CoverImage]);
 
         return $dataProvider;
     }

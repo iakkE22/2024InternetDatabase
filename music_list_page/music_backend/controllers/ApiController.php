@@ -258,6 +258,27 @@ class ApiController extends Controller
         }
     }
 
+    public function actionGetVideoDetail($id)
+    {
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+        try {
+            $video = (new \yii\db\Query())
+                ->select(['musicvideos.MVID', 'musicvideos.Title', 'musicvideos.ArtistID', 'musicvideos.VideoPath', 'IFNULL(mvlikes.LikeCount, 0) AS LikeCount'])
+                ->from('musicvideos')
+                ->leftJoin('mvlikes', 'musicvideos.MVID = mvlikes.MVID')
+                ->where(['musicvideos.MVID' => $id])
+                ->one();
+
+            if ($video) {
+                return ['status' => 1, 'data' => ['video' => $video]];
+            } else {
+                return ['status' => 0, 'message' => '视频不存在'];
+            }
+        } catch (\Exception $e) {
+            return ['status' => 0, 'message' => $e->getMessage()];
+        }
+    }
 
     public function actionGetMvs()
     {
@@ -265,8 +286,14 @@ class ApiController extends Controller
 
         try {
             $mvs = (new \yii\db\Query())
-                ->select(['MVID', 'Title', 'CoverImage'])
-                ->from('mvs')
+                ->select([
+                    'musicvideos.MVID',
+                    'musicvideos.Title',
+                    'musicvideos.CoverImage',
+                    'IFNULL(mvlikes.LikeCount, 0) AS LikeCount',
+                ])
+                ->from('musicvideos')
+                ->leftJoin('mvlikes', 'musicvideos.MVID = mvlikes.MVID')
                 ->all();
 
             return [
@@ -280,6 +307,67 @@ class ApiController extends Controller
                 'status' => 0,
                 'message' => $e->getMessage(),
             ];
+        }
+    }
+
+    public function actionLikeMv()
+    {
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+        try {
+            $request = \Yii::$app->request;
+            $MVID = $request->post('MVID');
+
+            if (!$MVID) {
+                throw new \Exception("参数 MVID 缺失");
+            }
+
+            // 更新点赞数
+            $mvLike = (new \yii\db\Query())
+                ->select('*')
+                ->from('mvlikes')
+                ->where(['MVID' => $MVID])
+                ->one();
+
+            if ($mvLike) {
+                // 如果记录存在，更新点赞数
+                \Yii::$app->db->createCommand()
+                    ->update('mvlikes', ['LikeCount' => $mvLike['LikeCount'] + 1], ['MVID' => $MVID])
+                    ->execute();
+            } else {
+                // 如果记录不存在，插入新记录
+                \Yii::$app->db->createCommand()
+                    ->insert('mvlikes', ['MVID' => $MVID, 'LikeCount' => 1])
+                    ->execute();
+            }
+
+            return [
+                'status' => 1,
+                'message' => '点赞成功',
+            ];
+        } catch (\Exception $e) {
+            return [
+                'status' => 0,
+                'message' => $e->getMessage(),
+            ];
+        }
+    }
+    
+    public function actionGetComments($videoId)
+    {
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+        try {
+            $comments = (new \yii\db\Query())
+                ->select(['UserID', 'CommentText', 'CommentDate'])
+                ->from('mvcomments')
+                ->where(['MVID' => $videoId])
+                ->orderBy(['CommentDate' => SORT_DESC])
+                ->all();
+
+            return ['status' => 1, 'data' => ['comments' => $comments]];
+        } catch (\Exception $e) {
+            return ['status' => 0, 'message' => $e->getMessage()];
         }
     }
 
@@ -342,6 +430,69 @@ class ApiController extends Controller
             ];
         }
     }
+
+    public function actionAddMvComment()
+    {
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+        try {
+            $request = \Yii::$app->request;
+            $session = \Yii::$app->session;
+
+            // 检查用户是否登录
+            if (!$session->has('user')) {
+                throw new \Exception("用户未登录");
+            }
+
+            $user = $session->get('user');
+            $userID = $user['id']; // 获取当前登录用户的 ID
+
+            // 获取请求参数
+            $MVID = $request->post('MVID'); // 获取 MV 的 ID
+            $commentText = $request->post('CommentText'); // 获取评论文本
+
+            // 调试日志
+            error_log("Received MVID: " . json_encode($MVID));
+            error_log("Received CommentText: " . json_encode($commentText));
+
+            // 参数校验
+            if (empty($MVID) || empty($commentText)) {
+                throw new \Exception("参数不完整，请提供 MVID 和 CommentText");
+            }
+
+            // 插入评论到数据库
+            $result = \Yii::$app->db->createCommand()->insert('mvcomments', [
+                'MVID' => $MVID,
+                'UserID' => $userID,
+                'CommentText' => $commentText,
+                'CommentDate' => date('Y-m-d H:i:s')
+            ])->execute();
+
+            if ($result) {
+                $commentID = \Yii::$app->db->getLastInsertID(); // 获取插入的评论 ID
+
+                return [
+                    'status' => 1,
+                    'message' => '评论添加成功',
+                    'data' => [
+                        'CommentID' => $commentID,
+                        'UserID' => $userID,
+                        'MVID' => $MVID,
+                        'CommentText' => $commentText,
+                        'CommentDate' => date('Y-m-d H:i:s')
+                    ]
+                ];
+            } else {
+                throw new \Exception("数据库插入失败");
+            }
+        } catch (\Exception $e) {
+            return [
+                'status' => 0,
+                'message' => $e->getMessage()
+            ];
+        }
+    }
+
     public function behaviors()
     {
         return [

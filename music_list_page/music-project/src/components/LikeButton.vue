@@ -1,6 +1,6 @@
 <template>
   <div class="like-button">
-    <button @click="toggleLike" :class="{ 'liked': isLiked }">
+    <button @click="$emit('like')" :class="{ 'liked': true }">
       <span class="heart-icon">❤️</span>
       <span class="like-count">{{ likes }}</span>
     </button>
@@ -13,17 +13,6 @@ export default {
     likes: {
       type: Number,
       required: true,
-    },
-  },
-  data() {
-    return {
-      isLiked: false, // 是否已点赞
-    };
-  },
-  methods: {
-    toggleLike() {
-      this.isLiked = !this.isLiked;
-      this.$emit("like", this.isLiked ? 1 : -1); // 触发点赞/取消点赞事件
     },
   },
 };
@@ -55,13 +44,13 @@ export default {
 .like-button button:hover {
   background-color: #007bff;
   color: white;
-  transform: scale(1.1); /* 鼠标悬停时放大效果 */
+  transform: scale(1.1);
 }
 
 .like-button button.liked {
   background-color: #ff4b5c;
   color: white;
-  transform: scale(1.2); /* 点击后的缩放效果 */
+  transform: scale(1.2);
   animation: pop 0.4s ease;
 }
 

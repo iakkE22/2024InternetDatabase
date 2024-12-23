@@ -11,6 +11,7 @@ use Yii;
  * @property string $Title
  * @property int $ArtistID
  * @property string $VideoPath
+ * @property string|null $CoverImage
  *
  * @property Artists $artist
  * @property Mvcomments[] $mvcomments
@@ -34,7 +35,7 @@ class Musicvideos extends \yii\db\ActiveRecord
             [['Title', 'ArtistID', 'VideoPath'], 'required'],
             [['ArtistID'], 'integer'],
             [['Title'], 'string', 'max' => 100],
-            [['VideoPath'], 'string', 'max' => 255],
+            [['VideoPath', 'CoverImage'], 'string', 'max' => 255],
             [['ArtistID'], 'exist', 'skipOnError' => true, 'targetClass' => Artists::class, 'targetAttribute' => ['ArtistID' => 'ArtistID']],
         ];
     }
@@ -49,6 +50,7 @@ class Musicvideos extends \yii\db\ActiveRecord
             'Title' => 'Title',
             'ArtistID' => 'Artist ID',
             'VideoPath' => 'Video Path',
+            'CoverImage' => 'Cover Image',
         ];
     }
 

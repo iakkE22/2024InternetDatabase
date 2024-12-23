@@ -70,7 +70,6 @@
                 alt="MV封面"
               />
               <h3>{{ mv.Title }}</h3>
-              <p>{{ playlist.Description }}</p>
             </div>
           </div>
         </section>

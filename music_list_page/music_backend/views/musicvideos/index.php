@@ -33,6 +33,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'Title',
             'ArtistID',
             'VideoPath',
+            'CoverImage',
             [
                 'class' => ActionColumn::className(),
                 'urlCreator' => function ($action, Musicvideos $model, $key, $index, $column) {
