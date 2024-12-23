@@ -2,11 +2,12 @@
   <div class="music-player">
     <!-- 歌曲封面 -->
     <img
-      :src="currentSong?.CoverImage || defaultCover"
-      alt="歌曲封面"
-      class="player-cover"
-      @click="showSongDetails"
-    />
+  :src="currentSong?.CoverImage || defaultCover"
+  alt="歌曲封面"
+  class="player-cover"
+  @click="showInfoModal"
+/>
+
 
     <!-- 歌曲信息 -->
     <div class="player-info">
@@ -34,15 +35,30 @@
     </div>
 
     <!-- 模态框 -->
-    <div class="modal" v-if="isModalVisible">
-      <div class="modal-content">
+    <!-- <div class="modal" v-if="isModalVisible">
+  <div class="modal-content">
         <h2>歌曲详情</h2>
         <p><strong>歌曲名称：</strong>{{ currentSong?.Title || "未播放歌曲" }}</p>
         <p><strong>歌手：</strong>{{ currentSong?.ArtistName || "未知歌手" }}</p>
         <p><strong>时长：</strong>{{ formatTime(duration) }}</p>
         <button @click="closeModal">关闭</button>
       </div>
-    </div>
+    </div> -->
+    <!-- 歌手和歌曲详情模态框 -->
+<div class="info-modal" v-if="isInfoModalVisible">
+  <div class="modal-content">
+    <img
+      :src="currentSong?.CoverImage || defaultCover"
+      alt="歌曲封面"
+      class="modal-cover"
+    />
+    <h3>{{ currentSong?.Title || "未播放歌曲" }}</h3>
+    <p><strong>歌手：</strong>{{ currentSong?.ArtistName || "未知歌手" }}</p>
+    <p><strong>歌曲时长：</strong>{{ formatTime(duration) }}</p>
+    <button class="modal-close-button" @click="closeInfoModal">关闭</button>
+  </div>
+</div>
+
   </div>
 </template>
 
@@ -127,14 +143,16 @@ export default {
       this.duration = 0;
       this.audio = null;
     },
-    showSongDetails() {
-      // 显示模态框
-      this.isModalVisible = true;
-    },
+    showInfoModal() {
+    this.isInfoModalVisible = true; // 显示模态框
+  },
     closeModal() {
       // 关闭模态框
       this.isModalVisible = false;
     },
+    closeInfoModal() {
+    this.isInfoModalVisible = false; // 关闭模态框
+  },
   },
 };
 </script>
@@ -145,14 +163,29 @@ export default {
   bottom: 0;
   left: 0;
   width: 100%;
-  background-color: rgba(0, 0, 0, 0.8);
-  color: white;
+  background-color: rgba(255, 219, 142, 0.741);
+  color: rgb(255, 255, 195);
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 10px 20px;
   box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.5);
   z-index: 1000;
+}
+
+.modal-close-button {
+  margin-top: 20px;
+  background-color: #ff5722;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.modal-close-button:hover {
+  background-color: #e64a19;
 }
 
 .player-cover {
@@ -238,12 +271,27 @@ input[type="range"] {
 }
 
 .modal-content {
-  background: white;
+  background: rgb(255, 224, 181);
+  color: rgb(0, 0, 0);
   padding: 20px;
   border-radius: 10px;
-  max-width: 500px;
-  width: 90%;
   text-align: center;
+  max-width: 400px;
+  width: 90%;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.modal-cover {
+  width: 150px;
+  height: 150px;
+  border-radius: 10px;
+  object-fit: cover;
+  margin-bottom: 15px;
+}
+
+.modal-content h3 {
+  font-size: 20px;
+  margin-bottom: 10px;
 }
 
 .modal-content h2 {
@@ -251,21 +299,31 @@ input[type="range"] {
 }
 
 .modal-content p {
-  margin: 10px 0;
+  font-size: 16px;
+  margin: 5px 0;
 }
-
 .modal-content button {
   margin-top: 20px;
   padding: 10px 20px;
-  background-color: #1db954;
+  background-color: #ffc219;
   color: white;
   border: none;
   border-radius: 5px;
   cursor: pointer;
 }
 
-.modal-content button:hover {
-  background-color: #1ed760;
+.info-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6); /* 半透明背景 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1100;
 }
+
 
 </style>
