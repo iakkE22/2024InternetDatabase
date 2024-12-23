@@ -53,7 +53,7 @@
         </div>
 
         <!-- 底部播放器 -->
-        <MusicPlayer :currentSong="currentSong" />
+        <!-- <MusicPlayer :currentSong="currentSong" /> -->
       </div>
     </div>
   </div>
@@ -61,10 +61,11 @@
 
 <script>
 import axios from "axios";
-import MusicPlayer from "@/components/MusicPlayer.vue";
+// import MusicPlayer from "@/components/MusicPlayer.vue";
+import eventBus from "@/eventBus";
 
 export default {
-  components: { MusicPlayer },
+  // components: { MusicPlayer },
   data() {
     return {
       playlist: null, // 当前歌单信息
@@ -129,8 +130,18 @@ export default {
     },
     // 播放歌曲
     playSong(song) {
-      this.currentSong = song; // 更新当前播放歌曲的信息
-    },
+  if (song && song.FilePath) {
+    console.log("播放歌曲:", song); // 验证点击歌曲是否正确
+    eventBus.emit("play-song", {
+      Title: song.Title,
+      ArtistID: song.ArtistID,
+      CoverImage: song.CoverImage || "/music-project/assets/images/song_covers/default-cover.jpg",
+      url: song.FilePath,
+    }); // 触发全局事件
+  } else {
+    console.error("无效的歌曲信息或文件路径:", song);
+  }
+},
     // 提交评论
     async submitComment() {
       if (!this.newCommentText.trim()) {

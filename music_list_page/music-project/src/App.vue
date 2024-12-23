@@ -9,9 +9,9 @@
     <div class="App-Containner">
       <router-view />
     </div>
-        <!-- 音乐播放器 -->
-        <div v-if="show">
-      <MPlayer />
+        <!-- 全局音乐播放器 -->
+    <div v-if="show">
+      <MPlayer :currentSong="currentSong" />
     </div>
   </div>
 </template>
@@ -21,12 +21,24 @@ import NavBar from "@/components/NavBar.vue";
 // 导入 NavBar 组件
 import MPlayer from "@/components/MusicPlayer.vue";
 
+import eventBus from "@/eventBus";
+
 export default {
   // 注册 NavBar 组件
   components: {
     NavBar,
     MPlayer
   },
+  data() {
+  return {
+    currentSong: {
+      Title: "未播放歌曲",
+      ArtistID: "未知歌手",
+      CoverImage: "/music-project/assets/images/song_covers/default-cover.jpg",
+      url: "",
+    },
+  };
+},
   computed: {
     show() {
       const meta = this.$route.meta
@@ -34,6 +46,13 @@ export default {
       return !meta || meta.showNavBar !== false
     }
   },
+  mounted() {
+    eventBus.on("play-song", (song) => {
+      console.log("接收到全局播放事件：", song); // 调试日志
+      this.currentSong = { ...song }; // 更新全局播放的歌曲信息
+    });
+  },
+
 };
 </script>
 <style>

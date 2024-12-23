@@ -2,7 +2,7 @@
   <div class="music-player">
     <!-- 歌曲封面 -->
     <img
-      :src="currentSong?.cover || defaultCover"
+      :src="currentSong?.CoverImage || defaultCover"
       alt="歌曲封面"
       class="player-cover"
       @click="showSongDetails"
@@ -10,8 +10,8 @@
 
     <!-- 歌曲信息 -->
     <div class="player-info">
-      <h3>{{ currentSong?.name || "未播放歌曲" }}</h3>
-      <p>{{ currentSong?.artist || "未知歌手" }}</p>
+      <h3>{{ currentSong?.Title || "未播放歌曲" }}</h3>
+      <p>{{ currentSong?.ArtistID || "未知歌手" }}</p>
     </div>
 
     <!-- 播放控制 -->
@@ -37,9 +37,8 @@
     <div class="modal" v-if="isModalVisible">
       <div class="modal-content">
         <h2>歌曲详情</h2>
-        <p><strong>歌曲名称：</strong>{{ currentSong?.name || "未播放歌曲" }}</p>
-        <p><strong>歌手：</strong>{{ currentSong?.artist || "未知歌手" }}</p>
-        <p><strong>专辑：</strong>{{ currentSong?.album || "未知专辑" }}</p>
+        <p><strong>歌曲名称：</strong>{{ currentSong?.Title || "未播放歌曲" }}</p>
+        <p><strong>歌手：</strong>{{ currentSong?.ArtistID || "未知歌手" }}</p>
         <p><strong>时长：</strong>{{ formatTime(duration) }}</p>
         <button @click="closeModal">关闭</button>
       </div>
@@ -48,21 +47,19 @@
 </template>
 
 
-
 <script>
 export default {
   props: {
-    currentSong: {
-      type: Object,
-      default: () => ({
-        name: "未播放歌曲",
-        artist: "未知歌手",
-        album: "未知专辑",
-        cover: "",
-        url: null,
-      }),
-    },
+  currentSong: {
+    type: Object,
+    default: () => ({
+      Title: "未播放歌曲",
+      ArtistID: "未知歌手",
+      CoverImage: "/music-project/assets/images/song_covers/default-cover.jpg",
+      url: null,
+    }),
   },
+},
   data() {
     return {
       audio: null, // 音频对象
@@ -74,37 +71,52 @@ export default {
     };
   },
   watch: {
-    currentSong: {
-      immediate: true,
-      handler(newSong) {
-        if (this.audio) this.audio.pause();
-        if (newSong.url) this.initAudio(newSong.url);
-        else this.resetPlayer();
-      },
+  currentSong: {
+    immediate: true,
+    handler(newSong) {
+      if (this.audio) this.audio.pause();
+      if (newSong.url) {
+        this.initAudio(newSong.url);
+        this.isPlaying = true; // 设置为播放状态
+      } else {
+        this.resetPlayer();
+      }
     },
   },
+},
+
   methods: {
     initAudio(url) {
       this.audio = new Audio(url);
       this.audio.addEventListener("loadedmetadata", () => {
-        this.duration = this.audio.duration;
+        this.duration = this.audio.duration; // 初始化总时长
       });
       this.audio.addEventListener("timeupdate", () => {
-        this.currentTime = this.audio.currentTime;
+        this.currentTime = this.audio.currentTime; // 实时更新播放时间
       });
-    },
-    togglePlay() {
-      if (!this.audio) return;
-      if (this.isPlaying) this.audio.pause();
-      else this.audio.play();
-      this.isPlaying = !this.isPlaying;
+      this.audio.play();
+      this.isPlaying = true;
     },
     seek(event) {
       if (this.audio) {
-        this.audio.currentTime = event.target.value;
+        this.audio.currentTime = event.target.value; // 手动更新音频播放时间
+        this.currentTime = event.target.value; // 同步当前时间显示
       }
     },
+
+    togglePlay() {
+      if (!this.audio) return;
+      if (this.isPlaying) {
+        this.audio.pause();
+        //this.isPlaying = false; // 状态在暂停后更新
+      } else {
+        this.audio.play();
+        //this.isPlaying = true; // 状态在播放后更新
+      }
+      this.isPlaying = !this.isPlaying;
+    },
     formatTime(seconds) {
+      if (!seconds || isNaN(seconds)) return "0:00";
       const minutes = Math.floor(seconds / 60);
       const secs = Math.floor(seconds % 60);
       return `${minutes}:${secs < 10 ? "0" + secs : secs}`;

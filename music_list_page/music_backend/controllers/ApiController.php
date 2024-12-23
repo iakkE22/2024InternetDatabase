@@ -358,4 +358,38 @@ class ApiController extends Controller
             ],
         ];
     }
+    public function actionGetSong($id)
+{
+    \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+    try {
+        // 查询单首歌曲的信息
+        $song = (new \yii\db\Query())
+            ->select(['SongID', 'Title', 'ArtistID', 'FilePath', 'CoverImage'])
+            ->from('songs')
+            ->where(['SongID' => $id])
+            ->one();
+
+        if (!$song) {
+            return [
+                'status' => 0,
+                'message' => '歌曲不存在',
+            ];
+        }
+
+        return [
+            'status' => 1,
+            'data' => [
+                'song' => $song,
+            ],
+        ];
+    } catch (\Exception $e) {
+        return [
+            'status' => 0,
+            'message' => $e->getMessage(),
+        ];
+    }
+}
+
+
 }
