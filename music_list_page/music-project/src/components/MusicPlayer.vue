@@ -11,7 +11,7 @@
     <!-- 歌曲信息 -->
     <div class="player-info">
       <h3>{{ currentSong?.Title || "未播放歌曲" }}</h3>
-      <p>{{ currentSong?.ArtistID || "未知歌手" }}</p>
+      <p>{{ currentSong?.ArtistName || "未知歌手" }}</p>
     </div>
 
     <!-- 播放控制 -->
@@ -38,7 +38,7 @@
       <div class="modal-content">
         <h2>歌曲详情</h2>
         <p><strong>歌曲名称：</strong>{{ currentSong?.Title || "未播放歌曲" }}</p>
-        <p><strong>歌手：</strong>{{ currentSong?.ArtistID || "未知歌手" }}</p>
+        <p><strong>歌手：</strong>{{ currentSong?.ArtistName || "未知歌手" }}</p>
         <p><strong>时长：</strong>{{ formatTime(duration) }}</p>
         <button @click="closeModal">关闭</button>
       </div>
@@ -54,7 +54,7 @@ export default {
     type: Object,
     default: () => ({
       Title: "未播放歌曲",
-      ArtistID: "未知歌手",
+      ArtistName: "未知歌手", 
       CoverImage: "/music-project/assets/images/song_covers/default-cover.jpg",
       url: null,
     }),

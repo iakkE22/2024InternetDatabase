@@ -218,11 +218,13 @@ class ApiController extends Controller
                     'songs.SongID',
                     'songs.Title',
                     'songs.ArtistID', // 歌手 ID
+                    'artists.Name AS ArtistName', // 歌手名字
                     'songs.FilePath',
                     'songs.CoverImage',
                 ])
                 ->from('playlist_songs')
                 ->innerJoin('songs', 'playlist_songs.SongID = songs.SongID')
+                ->innerJoin('artists', 'songs.ArtistID = artists.ArtistID') // 联结 artists 表
                 ->where(['playlist_songs.PlaylistID' => $id])
                 ->orderBy(['playlist_songs.OrderIndex' => SORT_ASC])
                 ->all();

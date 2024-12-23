@@ -24,7 +24,7 @@
             <img :src="song.CoverImage || '/music-project/assets/images/loading.gif'" alt="歌曲封面" class="song-cover" />
             <div class="song-info">
               <h3>{{ song.Title }}</h3>
-              <p>歌手 ID: {{ song.ArtistID }}</p>
+              <p>{{ song.ArtistName }}</p>
             </div>
           </div>
         </div>
@@ -134,7 +134,7 @@ export default {
     console.log("播放歌曲:", song); // 验证点击歌曲是否正确
     eventBus.emit("play-song", {
       Title: song.Title,
-      ArtistID: song.ArtistID,
+      ArtistName: song.ArtistName, 
       CoverImage: song.CoverImage || "/music-project/assets/images/song_covers/default-cover.jpg",
       url: song.FilePath,
     }); // 触发全局事件
