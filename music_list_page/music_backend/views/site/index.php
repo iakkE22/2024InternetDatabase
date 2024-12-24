@@ -1,4 +1,10 @@
 <?php
+/**
+ * Team: Chillguys，NKU
+ * Coding by Luojin 2213912
+ * 更改了主页样式，易于管理后台数据
+ * 
+ */
 use yii\helpers\Html;
 
 $this->title = '后台管理';

@@ -1,5 +1,27 @@
 <?php
-
+/**
+ * Team: Chillguys，NKU
+ * Coding by Luojin 2213912 Litianyi 2210636 Liaoyuanjin 2213741,20241220
+ * 1.Coding by Luojin 2213912
+ * 创建了这个主要用于根据api来调用不同的函数的控制器，从而读取特定的表来返回不同的值给前端
+ * 创建用于注册和登录的api：actionLogin() & actionSignup()
+ * 创建了获取用户信息的api：actionGetUserInfo()
+ * 创建了调用用户评论的api用于个人页面显示：actionGetUserComments()
+ * 创建了获取歌单的api：actionGetPlaylists()
+ * 创建了获取特定歌曲的api：actionGetSongs($id)
+ * 创建了获取对应视频评论的api：actionGetVideoDetail($id)
+ * 
+ * 2.Coding by Litianyi 2210636
+ * 创建了获取视频的api：actionGetMvs()
+ * 创建了搜索特定视频的api：actionSearchMvs()
+ * 创建了获取视频点赞的api：actionLikeMv()
+ * 创建了获取视频评论的apil:actionGetComments($videoId)
+ * 创建了获取随机歌单的api：actionGetRandomPlaylistId()
+ * 
+ * 3.Coding by Liaoyuanjin 2213741
+ * 创建了增加歌单评论的api：actionAddComment()
+ * 创建了增加视频评论的api：actionAddMvComment()
+ */
 namespace app\controllers;
 
 use yii\web\Controller;
@@ -259,45 +281,44 @@ class ApiController extends Controller
     }
 
     public function actionGetVideoDetail($id)
-{
-    \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+    {
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
 
-    try {
-        // 查询视频详情，包括艺术家名称
-        $video = (new \yii\db\Query())
-            ->select([
-                'musicvideos.MVID',
-                'musicvideos.Title',
-                'musicvideos.ArtistID',
-                'artists.Name AS ArtistName', // 获取艺术家名称
-                'musicvideos.VideoPath',
-                'IFNULL(mvlikes.LikeCount, 0) AS LikeCount',
-            ])
-            ->from('musicvideos')
-            ->leftJoin('artists', 'musicvideos.ArtistID = artists.ArtistID') // 连接 artists 表
-            ->leftJoin('mvlikes', 'musicvideos.MVID = mvlikes.MVID')
-            ->where(['musicvideos.MVID' => $id])
-            ->one();
+        try {
+            // 查询视频详情，包括艺术家名称
+            $video = (new \yii\db\Query())
+                ->select([
+                    'musicvideos.MVID',
+                    'musicvideos.Title',
+                    'musicvideos.ArtistID',
+                    'artists.Name AS ArtistName', // 获取艺术家名称
+                    'musicvideos.VideoPath',
+                    'IFNULL(mvlikes.LikeCount, 0) AS LikeCount',
+                ])
+                ->from('musicvideos')
+                ->leftJoin('artists', 'musicvideos.ArtistID = artists.ArtistID') // 连接 artists 表
+                ->leftJoin('mvlikes', 'musicvideos.MVID = mvlikes.MVID')
+                ->where(['musicvideos.MVID' => $id])
+                ->one();
 
-        if ($video) {
-            return [
-                'status' => 1,
-                'data' => ['video' => $video],
-            ];
-        } else {
+            if ($video) {
+                return [
+                    'status' => 1,
+                    'data' => ['video' => $video],
+                ];
+            } else {
+                return [
+                    'status' => 0,
+                    'message' => '视频不存在',
+                ];
+            }
+        } catch (\Exception $e) {
             return [
                 'status' => 0,
-                'message' => '视频不存在',
+                'message' => $e->getMessage(),
             ];
         }
-    } catch (\Exception $e) {
-        return [
-            'status' => 0,
-            'message' => $e->getMessage(),
-        ];
     }
-}
-
 
     public function actionGetMvs()
     {
@@ -328,8 +349,9 @@ class ApiController extends Controller
             ];
         }
     }
+
     public function actionSearchMvs()
-{
+    {
     \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
 
     try {
@@ -359,7 +381,8 @@ class ApiController extends Controller
             'message' => $e->getMessage(),
         ];
     }
-}
+    }
+
     public function actionLikeMv()
     {
         \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
@@ -404,7 +427,7 @@ class ApiController extends Controller
     }
     
     public function actionGetComments($videoId)
-{
+    {
     \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
 
     try {
@@ -432,7 +455,7 @@ class ApiController extends Controller
             'message' => $e->getMessage(),
         ];
     }
-}
+    }
 
 
     public function actionAddComment()
@@ -575,69 +598,38 @@ class ApiController extends Controller
             ],
         ];
     }
-//     public function actionGetSong($id)
-// {
-//     \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
 
-//     try {
-//         // 查询单首歌曲的信息
-//         $song = (new \yii\db\Query())
-//             ->select(['SongID', 'Title', 'ArtistID', 'FilePath', 'CoverImage'])
-//             ->from('songs')
-//             ->where(['SongID' => $id])
-//             ->one();
+    public function actionGetRandomPlaylistId()
+    {
+        \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
 
-//         if (!$song) {
-//             return [
-//                 'status' => 0,
-//                 'message' => '歌曲不存在',
-//             ];
-//         }
+        try {
+            // 从数据库中随机获取一个 playlistID
+            $randomPlaylist = (new \yii\db\Query())
+                ->select(['PlaylistID'])
+                ->from('playlists')
+                ->orderBy(new \yii\db\Expression('RAND()')) // 使用 RAND() 随机排序
+                ->limit(1) // 只取一条记录
+                ->one();
 
-//         return [
-//             'status' => 1,
-//             'data' => [
-//                 'song' => $song,
-//             ],
-//         ];
-//     } catch (\Exception $e) {
-//         return [
-//             'status' => 0,
-//             'message' => $e->getMessage(),
-//         ];
-//     }
-// }
-public function actionGetRandomPlaylistId()
-{
-    \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
-
-    try {
-        // 从数据库中随机获取一个 playlistID
-        $randomPlaylist = (new \yii\db\Query())
-            ->select(['PlaylistID'])
-            ->from('playlists')
-            ->orderBy(new \yii\db\Expression('RAND()')) // 使用 RAND() 随机排序
-            ->limit(1) // 只取一条记录
-            ->one();
-
-        if ($randomPlaylist) {
-            return [
-                'status' => 1,
-                'data' => $randomPlaylist,
-            ];
-        } else {
+            if ($randomPlaylist) {
+                return [
+                    'status' => 1,
+                    'data' => $randomPlaylist,
+                ];
+            } else {
+                return [
+                    'status' => 0,
+                    'message' => '没有找到歌单',
+                ];
+            }
+        } catch (\Exception $e) {
             return [
                 'status' => 0,
-                'message' => '没有找到歌单',
+                'message' => $e->getMessage(),
             ];
         }
-    } catch (\Exception $e) {
-        return [
-            'status' => 0,
-            'message' => $e->getMessage(),
-        ];
     }
-}
 
 
 }
