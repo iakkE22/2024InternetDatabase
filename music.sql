@@ -1,17 +1,17 @@
 /*
  Navicat Premium Data Transfer
 
- Source Server         : DEPENDS
+ Source Server         : AAA建材王师傅
  Source Server Type    : MySQL
- Source Server Version : 80019
+ Source Server Version : 80036
  Source Host           : localhost:3306
  Source Schema         : music
 
  Target Server Type    : MySQL
- Target Server Version : 80019
+ Target Server Version : 80036
  File Encoding         : 65001
 
- Date: 24/12/2024 16:07:25
+ Date: 24/12/2024 19:37:56
 */
 
 SET NAMES utf8mb4;
@@ -43,7 +43,7 @@ CREATE TABLE `artists`  (
   `Bio` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL,
   `ProfilePic` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
   PRIMARY KEY (`ArtistID`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 11 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 15 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of artists
@@ -96,7 +96,7 @@ CREATE TABLE `musicvideos`  (
 -- ----------------------------
 -- Records of musicvideos
 -- ----------------------------
-INSERT INTO `musicvideos` VALUES (1, '鸳鸯戏MV', 1, '/uploads/mv/鸳鸯戏.mp4', 'project/assets/images/song_covers/AccidinoCover.jpg');
+INSERT INTO `musicvideos` VALUES (1, '鸳鸯戏MV', 1, '/uploads/mv/鸳鸯戏.mp4', '');
 INSERT INTO `musicvideos` VALUES (2, 'Accidino', 6, '/music-project/assets/video/Accidino.mp4', '/music-project/assets/images/song_covers/AccidinoCover.jpg');
 INSERT INTO `musicvideos` VALUES (3, 'Bejewled', 5, '/music-project/assets/video/Bejewled.mp4', '/music-project/assets/images/song_covers/BejewledCover.jpg');
 INSERT INTO `musicvideos` VALUES (4, 'Queencard', 7, '/music-project/assets/video/Queencard.mp4', '/music-project/assets/images/song_covers/QueencardCover.jpg');
@@ -288,7 +288,7 @@ CREATE TABLE `playlists`  (
   `Description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL,
   `CoverImage` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
   PRIMARY KEY (`PlaylistID`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 13 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 17 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of playlists
@@ -354,7 +354,7 @@ CREATE TABLE `songs`  (
   PRIMARY KEY (`SongID`) USING BTREE,
   INDEX `ArtistID`(`ArtistID`) USING BTREE,
   CONSTRAINT `songs_ibfk_1` FOREIGN KEY (`ArtistID`) REFERENCES `artists` (`ArtistID`) ON DELETE RESTRICT ON UPDATE RESTRICT
-) ENGINE = InnoDB AUTO_INCREMENT = 22 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 75 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of songs
